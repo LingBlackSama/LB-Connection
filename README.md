@@ -28,4 +28,17 @@ It pretty much works as same as `RemoteEvent:FireClient()`, but it's a little bi
 Advantage:
 - No need to create a new `RemoteEvent` for firing the `RemoteEvent`
 - It has a range to fire
+- More convenient
 
+## LBConnection.FireAllClient
+```lua
+function LBConnection.FireAllClient(
+  ID: string|number,
+  ...: any,
+)
+```
+It works as same as `RemoteEvent:FireAllClients()` but the callback use the `LBConnection.CallBack`
+
+Advantage:
+- No need to create a new `RemoteEvent` for firing the `RemoteEvent`
+- More convenient
