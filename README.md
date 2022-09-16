@@ -100,3 +100,19 @@ function LBConnection.CallBack(
   CallBack: Function, -- The callback function
 )
 ```
+Set the callback to recieve the data with the `ID`
+
+Advantage:
+- Simple and clean
+- More convenient
+
+## LBConnection.GetCallBack
+```lua
+function LBConnection.GetCallBack(
+  ID: string|number, The ID to identity the callback
+) => CallBack: Function -- The callback function
+```
+Return the callback corresponding with `ID`
+
+Advantage:
+- managable callback
