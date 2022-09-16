@@ -142,12 +142,12 @@ function LBConnection.Invoke(plr: Player, ID: string|number, TimeOut: IntValue, 
 end
 
 -- Set up the callback
-function LBConnection.CallBack(ID: string, CallBack: F)
+function LBConnection.CallBack(ID: string|number, CallBack: F)
     CallBackList[ID] = CallBack
 end
 
 -- Get the callback
-function LBConnection.GetCallBack(ID: string): F
+function LBConnection.GetCallBack(ID: string|number): F
     return CallBackList[ID]
 end
 
