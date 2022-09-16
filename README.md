@@ -13,7 +13,7 @@ function LBConnection.Fire(
 It works as same as `RemoteEvent:FireServer()/RemoteEvent:FireClient()` but the callback use the `LBConnection.CallBack`
 
 Advantage:
-- No need to create a new `RemoteEvent` for firing the `RemoteEvent`
+- No need to create a new `RemoteEvent` for firing
 - More convenient
 
 ## LBConnection.FireDistance
@@ -26,7 +26,7 @@ function LBConnection.FireDistance(
 ```
 It pretty much works as same as `RemoteEvent:FireClient()`, but it's a little bit different. It has a radius that can search all the players in the range. The callback also use the `LBConnection.CallBack`
 Advantage:
-- No need to create a new `RemoteEvent` for firing the `RemoteEvent`
+- No need to create a new `RemoteEvent` for firing
 - It has a range to fire
 - More convenient
 
@@ -40,7 +40,7 @@ function LBConnection.FireAllClient(
 It works as same as `RemoteEvent:FireAllClients()` but the callback use the `LBConnection.CallBack`
 
 Advantage:
-- No need to create a new `RemoteEvent` for firing the `RemoteEvent`
+- No need to create a new `RemoteEvent` for firing
 - More convenient
 
 ## LBConnection.FireBindable
@@ -51,3 +51,10 @@ function LBConnection.FireBindable(
   ...: any,
 )
 ```
+It works as same as `BindableEvent` but the callback use the `LBConnection.CallBack`
+
+Advantage:
+- No need to create a new `BindableEvent` for firing
+- It runs faster than `BindableEvent`
+- It doesn't cause memory leak
+- Unlike `BindableEvent`, it's not that expensive at all
