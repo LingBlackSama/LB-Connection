@@ -4,7 +4,7 @@
 # API
 ## LBConnection.Fire
 ```lua
-LBConnection.Fire(
+function LBConnection.Fire(
   Player: Player, -- Basically the player
   ID: string|number, -- The ID to identity the callback
   ...: any, -- Data to pass
@@ -42,3 +42,12 @@ It works as same as `RemoteEvent:FireAllClients()` but the callback use the `LBC
 Advantage:
 - No need to create a new `RemoteEvent` for firing the `RemoteEvent`
 - More convenient
+
+## LBConnection.FireBindable
+```lua
+function LBConnection.FireBindable(
+  Player: Player,
+  ID: string|number,
+  ...: any,
+)
+```
