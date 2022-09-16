@@ -61,7 +61,7 @@ Advantage:
 - It doesn't cause memory leak
 - Unlike `BindableEvent`, it's not that expensive at all
 
-## LBConnection.Invoke
+## LBConnection.InvokeBindable
 ```lua
 function LBConnection.InvokeBindable(
   plr: Player, -- Basically the player
@@ -73,7 +73,30 @@ function LBConnection.InvokeBindable(
 It works as same as `BindableFunction` but the callback use the `LBConnection.CallBack`. `TimeOut` will yield until the `TimeOut` is reached (given in seconds). If it recieved the data, it will return the `CallbackState` as a true and the data. Else, the `CallbackState` will just return false.
 
 Advantage:
-- No need to create a new `BindableFunction` for firing
+- No need to create a new `BindableFunction` for invoking
 - It runs faster than `BindableFunction`
 - It doesn't cause memory leak
 - Unlike `BindableFunction`, it's not that expensive at all
+
+## LBConnection.Invoke
+```lua
+function LBConnection.Invoke(
+  plr: Player, -- Basically the player
+  ID: string|number, -- The ID to identity the callback
+  TimeOut: IntValue, -- Yield until TimeOut is reached.
+  ...: any, -- Data to pass
+) => CallbackState: boolean, Data: any
+```
+It works as same as `RemoteFunction` but the callback use the `LBConnection.CallBack`. `TimeOut` will yield until the `TimeOut` is reached (given in seconds). If it recieved the data, it will return the `CallbackState` as a true and the data. Else, the `CallbackState` will just return false.
+
+Advantage:
+- No need to create a new `RemoteFunction` for invoking
+- It runs faster than `RemoteFunction`
+
+## LBConnection.CallBack
+```lua
+function LBConnection.CallBack(
+  ID: string|number, -- The ID to identity the callback
+  CallBack: Function, -- The callback function
+)
+```
