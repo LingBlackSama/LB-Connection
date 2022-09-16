@@ -69,7 +69,7 @@ function LBConnection.FireDistance(plr: Player, ID: string|number, RenderDistanc
 end
 
 -- Connection between (Client -> Client) and (Server -> Server)
-function LBConnection.FireBindable(plr: Player, ID: string|number, ...: any): any
+function LBConnection.FireBindable(plr: Player, ID: string|number, ...: any)
     if Server then
         BindableSentRemote:FireClient(plr, ID, ...)
     else
