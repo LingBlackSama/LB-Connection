@@ -31,6 +31,15 @@ https://github.com/LingBlackSama/LB-Connection/releases
 
   
 # API
+## LBConnection.WaitForCallBack
+```lua
+type LBConnection: {
+  WaitForCallBack: boolean, -- Default is false
+  WaitForCallBackDuration: number, -- Default is 1
+}
+```
+If `LBConnection.WaitForCallBack` is set to true and the callback does not yet exist, execution will be paused for the duration specified in `LBConnection.WaitForCallBackDuration` until the callback becomes available.
+
 ## LBConnection.Fire
 ```lua
 type LBConnection.Fire = (Player, string|number, any) -> ()
