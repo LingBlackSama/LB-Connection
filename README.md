@@ -1,5 +1,34 @@
 # LB-Connection
-  LB Connection is a module that provides a safe alternative to `RemoteFunction`, `BindableEvent`, and `BindableFunction` in the Roblox Studio. LB Connection is coded based on the Roblox Studio environment.
+LB Connection is a module that provides a safe alternative to `RemoteFunction`, `BindableEvent`, and `BindableFunction` in the Roblox Studio. LB Connection is coded based on the Roblox Studio environment.
+
+# Installation
+### Method 1 - Quick Installation
+1. In Roblox Studio, select the folder where you keep your third party modules/utilities.
+2. Run the codes below in the command bar: 
+```lua
+local Http = game:GetService("HttpService")
+local HttpEnabled = Http.HttpEnabled
+Http.HttpEnabled = true
+local rt = {"SentRemote", "InvokeSentRemote", "InvokeRecieveRemote"}
+local m = Instance.new("ModuleScript")
+m.Parent = game:GetService("Selection"):Get()[1] or game:GetService("ServerScriptService")
+m.Name = "LBConnection"
+m.Source = Http:GetAsync("https://raw.githubusercontent.com/LingBlackSama/LB-Connection/main/LBConnection.lua")
+game:GetService("Selection"):Set({m})
+for i = 1, 3 do
+	local r = Instance.new("RemoteEvent")
+	r.Name = rt[i]
+	r.Parent = m
+end
+Http.HttpEnabled = HttpEnabled
+```
+
+### Method 2 - Download from Roblox Marketplace
+https://www.roblox.com/library/11948403956/LB-Connection-Version-1-0
+
+### Method 3 - Download from Releases
+https://github.com/LingBlackSama/LB-Connection/releases
+
   
 # API
 ## LBConnection.Fire
