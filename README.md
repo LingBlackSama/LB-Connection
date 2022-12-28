@@ -33,46 +33,47 @@ https://github.com/LingBlackSama/LB-Connection/releases
 # API
 ## LBConnection.Fire
 ```lua
+type LBConnection.Fire = (Player, string|number, any) -> ()
 function LBConnection.Fire(
   Player: Player, -- Basically the player
   ID: string|number, -- The ID to identity the callback
   ...: any, -- Data to pass
 )
 ```
-It works as same as `RemoteEvent:FireServer()/RemoteEvent:FireClient()` but the callback use the `LBConnection.CallBack`
-
-Advantage:
-- No need to create a new `RemoteEvent` for firing
-- More convenient
+This function operates in a similar manner to `RemoteEvent:FireServer`/`RemoteEvent:FireClient`, but it does not create an additional `RemoteEvent`. Instead, the callback uses `LBConnection.CallBack`, creating a one-way connection between the client and server.
 
 ## LBConnection.FireDistance
 ```lua
+type LBConnection.FireDistance = (Player, string|number, number, any) -> ()
 function LBConnection.FireDistance(
   Player: Player, -- Basically the player
   ID: string|number, -- The ID to identity the callback
-  RenderDistance: IntValue, -- the radius of the range. Starting from the player you passed as the first parameter. Default is 20
+  RenderDistance: number, -- the radius of the range. Starting from the player you passed as the first parameter. Default is 20
   ...: any, -- Data to pass
 )
 ```
-It pretty much works as same as `RemoteEvent:FireClient()`, but it's a little bit different. It has a radius that can search all the players in the range. The callback also use the `LBConnection.CallBack`
+This function operates in a similar manner to `LBConnection.Fire`, but with a slight variation. It has the capability to search for all players within a specific radius range.
 
-Advantage:
-- No need to create a new `RemoteEvent` for firing
-- It has a range to fire
-- More convenient
-
-## LBConnection.FireAllClient
+## LBConnection.FireAll
 ```lua
-function LBConnection.FireAllClient(
+type LBConnection.FireAll = (string|number, any) -> ()
+function LBConnection.FireAll(
   ID: string|number, -- The ID to identity the callback
   ...: any, -- Data to pass
 )
 ```
-It works as same as `RemoteEvent:FireAllClients()` but the callback use the `LBConnection.CallBack`
+This function operates in a similar manner to `RemoteEvent:FireAllClients`, but it does not create an additional `RemoteEvent`. The callback uses `LBConnection.CallBack`, and it can be called from either the server or client.
 
-Advantage:
-- No need to create a new `RemoteEvent` for firing
-- More convenient
+## LBConnection.FireAllExcept
+```lua
+type LBConnection.FireAllExcept = (string|number, any) -> ()
+function LBConnection.FireAll(
+  ID: string|number, -- The ID to identity the callback
+  ExceptionArray: {Player}, -- an array with exceptional players in it
+  ...: any, -- Data to pass
+)
+```
+This function operates in a similar manner to `LBConnection.FireAll`, but it includes a filter list to exclude certain players from being fired.
 
 ## LBConnection.FireBindable
 ```lua
