@@ -1,10 +1,10 @@
 # LB-Connection
-LB Connection is a module that provides a safe alternative to `RemoteFunction`, `BindableEvent`, and `BindableFunction` in the Roblox Studio. LB Connection is coded based on the Roblox Studio environment.
+LB Connection is a module that offers a secure alternative to using `RemoteEvent`, `RemoteFunction`, `BindableEvent`, and `BindableFunction` in Roblox Studio. It is specifically designed and coded to function within the Roblox Studio environment.
 
 # Installation
 ### Method 1 - Quick Installation
-1. In Roblox Studio, select the folder where you keep your third party modules/utilities.
-2. Run the codes below in the command bar: 
+1. In Roblox Studio, select the folder where you store your third-party modules or utilities.
+2. Run the following codes in the command bar:
 ```lua
 local Http = game:GetService("HttpService")
 local HttpEnabled = Http.HttpEnabled
@@ -77,72 +77,41 @@ This function operates in a similar manner to `LBConnection.FireAll`, but it inc
 
 ## LBConnection.FireBindable
 ```lua
+type LBConnection.FireBindable = (string|number, any) -> any
 function LBConnection.FireBindable(
-  Player: Player, -- Basically the player
   ID: string|number, -- The ID to identity the callback
   ...: any, -- Data to pass
-)
+): ...: any
 ```
-It works as same as `BindableEvent` but the callback use the `LBConnection.CallBack`
-
-Advantage:
-- No need to create a new `BindableEvent` for firing
-- It runs faster than `BindableEvent`
-- It doesn't cause memory leak
-- Unlike `BindableEvent`, it's not that expensive at all
-
-## LBConnection.InvokeBindable
-```lua
-function LBConnection.InvokeBindable(
-  plr: Player, -- Basically the player
-  ID: string|number, -- The ID to identity the callback
-  TimeOut: IntValue, -- Yield until TimeOut is reached.
-  ...: any, -- Data to pass
-) => CallbackState: boolean, Data: any
-```
-It works as same as `BindableFunction` but the callback use the `LBConnection.CallBack`. `TimeOut` will yield until the `TimeOut` is reached (given in seconds). If it recieved the data, it will return the `CallbackState` as a true and the data. Else, the `CallbackState` will just return false.
-
-Advantage:
-- No need to create a new `BindableFunction` for invoking
-- It runs faster than `BindableFunction`
-- It doesn't cause memory leak
-- Unlike `BindableFunction`, it's not that expensive at all
+This function operates in a similar manner to `BindableEvent` and `BindableFunction`, but the callback uses `LBConnection.CallBack`. Additionally, it does not create an additional `BindableEvent` or `BindableFunction`, which makes the function run faster, prevents memory leaks, and is not resource-intensive.
 
 ## LBConnection.Invoke
 ```lua
+type LBConnection.Invoke = (Player, string|number, number, any) -> (boolean, any)
 function LBConnection.Invoke(
   plr: Player, -- Basically the player
   ID: string|number, -- The ID to identity the callback
-  TimeOut: IntValue, -- Yield until TimeOut is reached.
+  TimeOut: number, -- Yield until TimeOut is reached (given in seconds).
   ...: any, -- Data to pass
-) => CallbackState: boolean, Data: any
+): CallbackState: boolean, Data: any
 ```
-It works as same as `RemoteFunction` but the callback use the `LBConnection.CallBack`. `TimeOut` will yield until the `TimeOut` is reached (given in seconds). If it recieved the data, it will return the `CallbackState` as a true and the data. Else, the `CallbackState` will just return false.
-
-Advantage:
-- No need to create a new `RemoteFunction` for invoking
-- It runs faster than `RemoteFunction`
+This function operates in a similar manner to `RemoteFunction`, but it does not create an additional `RemoteFunction` and uses `LBConnection.CallBack` as a callback. It runs faster than `RemoteFunction`. The `TimeOut` parameter will pause execution until the specified time in seconds has elapsed. If data is received during this time, the `CallbackState` will return as true along with the data. If no data is received, the `CallbackState` will return as false.
 
 ## LBConnection.CallBack
 ```lua
+type LBConnection.CallBack = (string|number, function) -> ()
 function LBConnection.CallBack(
   ID: string|number, -- The ID to identity the callback
-  CallBack: Function, -- The callback function
+  CallBack: function, -- The callback function
 )
 ```
-Set the callback to recieve the data with the `ID`
-
-Advantage:
-- Simple and clean
-- More convenient
+To receive the data with the specified `ID`, set the callback to `CallBack`
 
 ## LBConnection.GetCallBack
 ```lua
+type LBConnection.GetCallBack = () -> (function)
 function LBConnection.GetCallBack(
   ID: string|number, The ID to identity the callback
-) => CallBack: Function -- The callback function
+): CallBack: function -- The callback function
 ```
-Return the callback corresponding with `ID`
-
-Advantage:
-- managable callback
+The callback corresponding with the specified `ID` will be returned.
