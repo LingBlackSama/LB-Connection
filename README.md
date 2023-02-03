@@ -1,6 +1,8 @@
 # LB-Connection
 LB Connection is a module that offers a secure alternative to using `RemoteEvent`, `RemoteFunction`, `BindableEvent`, and `BindableFunction` in Roblox Studio. It is specifically designed and coded to function within the Roblox Studio environment.
 
+#### Note that the following API are for Version 1.0 only
+
 # Installation
 ### Method 1 - Quick Installation
 1. In Roblox Studio, select the folder where you store your third-party modules or utilities.
