@@ -1,5 +1,5 @@
 # LB-Connection
-LB Connection is a `modulescript` that offers an alternative to using `RemoteEvent`, `RemoteFunction`, `BindableEvent`, and `BindableFunction` in Roblox Studio. It is specifically designed and coded to function within the Roblox Studio environment.
+LB Connection is a `modulescript` that offers an alternative to use `RemoteEvent`, `RemoteFunction`, `BindableEvent`, and `BindableFunction` in Roblox Studio. It is specifically designed and coded to function within the Roblox Studio environment.
 
 # Installation
 ### Method 1 - Quick Installation
@@ -23,8 +23,8 @@ f.Parent = m
 Http.HttpEnabled = HttpEnabled
 ```
 
-### Method 2 - Download from Roblox Marketplace
-https://www.roblox.com/library/11948403956/LB-Connection-Version-1-0
+### Method 2 - Download from Roblox Marketplace (Not updated yet)
+~~https://www.roblox.com/library/11948403956/LB-Connection-Version-1-0~~
 
 ### Method 3 - Download from Releases
 https://github.com/LingBlackSama/LB-Connection/releases
@@ -35,19 +35,19 @@ https://github.com/LingBlackSama/LB-Connection/releases
 ```lua
 type LBConnection.RemoteEvent = (string, {RateLimit: number?, RateLimitTime: number?}) -> any
 function LBConnection.RemoteEvent(
-	Name: string,
-	Info: {RateLimit: number?, RateLimitTime: number?},
+  Name: string,
+  Info: {RateLimit: number?, RateLimitTime: number?},
 ): {
-	_Name: string,
-	_Remote: nil|RemoteEvent,
-	Fire: (any) -> (),
-	FireTo: ({Player}, any) -> (),
-	FireAll: (any) -> (),
-	FireAllExcept: ({Player}, any) -> (),
-	FireDistance: (Player, number, any) -> (),
-	CallBack: ((any) -> any) -> ((any) -> any),
-	Once: ((any) -> any) -> ((any) -> any),
-	GetCallBack: () -> ((any) -> any),
+  _Name: string,
+  _Remote: nil|RemoteEvent,
+  Fire: (any) -> (),
+  FireTo: ({Player}, any) -> (),
+  FireAll: (any) -> (),
+  FireAllExcept: ({Player}, any) -> (),
+  FireDistance: (Player, number, any) -> (),
+  CallBack: ((any) -> any) -> ((any) -> any),
+  Once: ((any) -> any) -> ((any) -> any),
+  GetCallBack: () -> ((any) -> any),
 }
 ```
 The `LBConnection.RemoteEvent` function creates a RemoteEvent object within the LB Connection. The `RateLimit` parameter represents the rate limit for the `RemoteEvent`, and the `RateLimitTime` parameter represents the duration of the rate limit.
@@ -61,19 +61,7 @@ function LBConnection.RemoteEvent.Fire(
 ```
 The function operates in a similar manner to the `RemoteEvent:FireServer` and `RemoteEvent:FireClient` methods, but it converts the byte string that is passed to it into a binary string. Additionally, the callback uses the `LBConnection.RemoteEvent.CallBack` or `LBConnection.RemoteEvent.Once` method, thereby establishing a one-way communication link between the client and server.
 
-## LBConnection.FireDistance
-```lua
-type LBConnection.FireDistance = (Player, string|number, number, any) -> ()
-function LBConnection.FireDistance(
-  Player: Player, -- Basically the player
-  ID: string|number, -- The ID to identity the callback
-  RenderDistance: number, -- the radius of the range. Starting from the player you passed as the first parameter. Default is 20
-  ...: any, -- Data to pass
-)
-```
-This function operates in a similar manner to `LBConnection.Fire`, but with a slight variation. It has the capability to search for all players within a specific radius range.
-
-## LBConnection.FireAll
+## LBConnection.FireAll [Server only]
 ```lua
 type LBConnection.FireAll = (string|number, any) -> ()
 function LBConnection.FireAll(
@@ -81,7 +69,29 @@ function LBConnection.FireAll(
   ...: any, -- Data to pass
 )
 ```
-This function operates in a similar manner to `RemoteEvent:FireAllClients`, but it does not create an additional `RemoteEvent`. The callback uses `LBConnection.CallBack`, and it can be called from either the server or client.
+This function operates in a similar manner to `RemoteEvent:FireAllClients`. The callback uses callback uses the `LBConnection.RemoteEvent.CallBack` or `LBConnection.RemoteEvent.Once` method.
+
+## LBConnection.FireTo [Server only]
+```lua
+type LBConnection.FireTo = ({Player}, any) -> ()
+function LBConnection.FireTo(
+  PlayerArray: {Player},
+  ...: any,
+)
+```
+This function operates in a similar manner to `LBConnection.RemoteEvent.FireAll`, but it includes a filter list to exclude certain players from being fired.
+
+
+## LBConnection.FireDistance [Server only]
+```lua
+type LBConnection.FireDistance = (Player, number, any) -> ()
+function LBConnection.FireDistance(
+  plr: Player,
+  RenderDistance: number,
+  ...: any,
+)
+```
+This function operates in a similar manner to `LBConnection.RemoteEvent.Fire`, but with a slight variation. It has the capability to search for all players within a specific radius range.
 
 ## LBConnection.FireAllExcept
 ```lua
