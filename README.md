@@ -56,25 +56,34 @@ The `LBConnection.RemoteEvent` function creates a RemoteEvent object within the 
 ```lua
 type LBConnection.RemoteEvent.Fire = (any) -> ()
 function LBConnection.RemoteEvent.Fire(
-	...: any
+  ...: any
 )
 ```
-The function operates in a similar manner to the `RemoteEvent:FireServer` and `RemoteEvent:FireClient` methods, but it converts the byte string that is passed to it into a binary string. Additionally, the callback uses the `LBConnection.RemoteEvent.CallBack` or `LBConnection.RemoteEvent.Once` method, thereby establishing a one-way communication link between the client and server.
+The function operates in a similar manner to the `RemoteEvent:FireServer` and `RemoteEvent:FireClient` methods, but it converts the byte string that is passed to it into a binary string. Additionally, the callback uses the `LBConnection.RemoteEvent.CallBack` or `LBConnection.RemoteEvent.Once` method, thereby establishing a one-way communication link between the client and server. If the function is called on the server, it is necessary to pass the `Player` as the first argument.
 
-## LBConnection.FireAll [Server only]
+## LBConnection.RemoteEvent.FireAll [Server only]
 ```lua
-type LBConnection.FireAll = (string|number, any) -> ()
-function LBConnection.FireAll(
-  ID: string|number, -- The ID to identity the callback
-  ...: any, -- Data to pass
+type LBConnection.RemoteEvent.FireAll = (any) -> ()
+function LBConnection.RemoteEvent.FireAll(
+ ...: any
 )
 ```
 This function operates in a similar manner to `RemoteEvent:FireAllClients`. The callback uses callback uses the `LBConnection.RemoteEvent.CallBack` or `LBConnection.RemoteEvent.Once` method.
 
-## LBConnection.FireTo [Server only]
+## LBConnection.RemoteEvent.FireTo [Server only]
 ```lua
-type LBConnection.FireTo = ({Player}, any) -> ()
-function LBConnection.FireTo(
+type LBConnection.RemoteEvent.FireTo = ({Player}, any) -> ()
+function LBConnection.RemoteEvent.FireTo(
+  PlayerArray: {Player},
+  ...: any,
+)
+```
+This function operates in a similar manner to `LBConnection.RemoteEvent.FireAll`, but it includes a filter list to exclude certain players from being fired.
+
+## LBConnection.RemoteEvent.FireAllExcept [Server only]
+```lua
+type LBConnection.RemoteEvent.FireAllExcept = ({Player}, any) -> ()
+function LBConnection.RemoteEvent.FireAllExcept(
   PlayerArray: {Player},
   ...: any,
 )
@@ -82,10 +91,10 @@ function LBConnection.FireTo(
 This function operates in a similar manner to `LBConnection.RemoteEvent.FireAll`, but it includes a filter list to exclude certain players from being fired.
 
 
-## LBConnection.FireDistance [Server only]
+## LBConnection.RemoteEvent.FireDistance [Server only]
 ```lua
-type LBConnection.FireDistance = (Player, number, any) -> ()
-function LBConnection.FireDistance(
+type LBConnection.RemoteEvent.FireDistance = (Player, number, any) -> ()
+function LBConnection.RemoteEvent.FireDistance(
   plr: Player,
   RenderDistance: number,
   ...: any,
@@ -93,16 +102,30 @@ function LBConnection.FireDistance(
 ```
 This function operates in a similar manner to `LBConnection.RemoteEvent.Fire`, but with a slight variation. It has the capability to search for all players within a specific radius range.
 
-## LBConnection.FireAllExcept
+## LBConnection.RemoteEvent.CallBack
 ```lua
-type LBConnection.FireAllExcept = (string|number, any) -> ()
-function LBConnection.FireAll(
-  ID: string|number, -- The ID to identity the callback
-  ExceptionArray: {Player}, -- an array with exceptional players in it
-  ...: any, -- Data to pass
-)
+type LBConnection.RemoteEvent.CallBack = ((any) -> any) -> ((any) -> any)
+function LBConnection.RemoteEvent.CallBack(
+  CallBack: (any) -> any
+): ((any) -> any)
 ```
-This function operates in a similar manner to `LBConnection.FireAll`, but it includes a filter list to exclude certain players from being fired.
+The function sets the RemoteEvent callback to `CallBack` function
+
+## LBConnection.RemoteEvent.Once
+```lua
+type LBConnection.RemoteEvent.Once = ((any) -> any) -> ((any) -> any)
+function LBConnection.RemoteEvent.Once(
+  CallBack: (any) -> any
+): ((any) -> any)
+```
+This function operates in a manner similar to `LBConnection.RemoteEvent.CallBack`, however, it will only be called once.
+
+## LBConnection.RemoteEvent.GetCallBack
+```lua
+type LBConnection.RemoteEvent.GetCallBack = () -> ((any) -> any)
+function LBConnection.RemoteEvent.GetCallBack(): ((any) -> any)
+```
+The function returns the callback that was set with `LBConnection.RemoteEvent.CallBack`.
 
 ## LBConnection.FireBindable
 ```lua
