@@ -50,7 +50,7 @@ function LBConnection.RemoteEvent(
   GetCallBack: () -> ((any) -> any),
 }
 ```
-The `LBConnection.RemoteEvent` function creates a RemoteEvent object within the LB Connection. The `RateLimit` parameter represents the rate limit for the `RemoteEvent`, and the `RateLimitTime` parameter represents the duration of the rate limit.
+The `LBConnection.RemoteEvent` function creates a LB RemoteEvent object within the LB Connection. The `RateLimit` parameter represents the rate limit for the `RemoteEvent`, and the `RateLimitTime` parameter represents the duration of the rate limit.
 
 ## LBConnection.RemoteEvent.Fire
 ```lua
@@ -127,6 +127,24 @@ function LBConnection.RemoteEvent.GetCallBack(): ((any) -> any)
 ```
 The function returns the callback that was set with `LBConnection.RemoteEvent.CallBack`.
 
+## LBConnection.RemoteFunction
+```lua
+type LBConnection.RemoteFunction = (string, {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}) -> any
+function LBConnection.RemoteFunction(
+  Name: string,
+  Info: {RateLimit: number?, RateLimitTime: number?},
+): {
+  _Name: string,
+	_TimeOut: number,
+  _Sent: nil|RemoteEvent,
+	_Receive: nil|RemoteEvent,
+	Invoke: (Player, any) -> (boolean, any?),
+	InvokeCallBack: ((any) -> any) -> (((any) -> any)),
+	GetInvokeCallBack: () -> ((any) -> any),
+}
+```
+The function `LBConnection.RemoteFunction` creates a LB RemoteFunction object within the LB Connection. It utilizes two `RemoteEvent` to simulate the behavior of a `RemoteFunction`. The `RateLimit` parameter specifies the rate limit for the LB RemoteFunction, while the `RateLimitTime` parameter indicates the duration of the rate limit. The `TimeOut` parameter defines the timeout duration for the LB RemoteFunction.
+
 ## LBConnection.FireBindable
 ```lua
 type LBConnection.FireBindable = (string|number, any) -> any
@@ -148,22 +166,3 @@ function LBConnection.Invoke(
 ): CallbackState: boolean, Data: any
 ```
 This function operates in a similar manner to `RemoteFunction`, but it does not create an additional `RemoteFunction` and uses `LBConnection.CallBack` as a callback. It runs faster than `RemoteFunction`. The `TimeOut` parameter will pause execution until the specified time in seconds has elapsed. If data is received during this time, the `CallbackState` will return as true along with the data. If no data is received, the `CallbackState` will return as false.
-
-## LBConnection.CallBack
-```lua
-type LBConnection.CallBack = (string|number, function) -> ()
-function LBConnection.CallBack(
-  ID: string|number, -- The ID to identity the callback
-  CallBack: function, -- The callback function
-)
-```
-To receive the data with the specified `ID`, set the callback to `CallBack`
-
-## LBConnection.GetCallBack
-```lua
-type LBConnection.GetCallBack = () -> (function)
-function LBConnection.GetCallBack(
-  ID: string|number, The ID to identity the callback
-): CallBack: function -- The callback function
-```
-The callback corresponding with the specified `ID` will be returned.
