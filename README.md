@@ -37,20 +37,29 @@ type LBConnection.RemoteEvent = (string, {RateLimit: number?, RateLimitTime: num
 function LBConnection.RemoteEvent(
 	Name: string,
 	Info: {RateLimit: number?, RateLimitTime: number?},
-): any
+): {
+	_Name: string,
+	_Remote: nil|RemoteEvent,
+	Fire: (any) -> (),
+	FireTo: ({Player}, any) -> (),
+	FireAll: (any) -> (),
+	FireAllExcept: ({Player}, any) -> (),
+	FireDistance: (Player, number, any) -> (),
+	CallBack: ((any) -> any) -> ((any) -> any),
+	Once: ((any) -> any) -> ((any) -> any),
+	GetCallBack: () -> ((any) -> any),
+}
 ```
 The `LBConnection.RemoteEvent` function creates a RemoteEvent object within the LB Connection. The `RateLimit` parameter represents the rate limit for the `RemoteEvent`, and the `RateLimitTime` parameter represents the duration of the rate limit.
 
-## LBConnection.Fire
+## LBConnection.RemoteEvent.Fire
 ```lua
-type LBConnection.Fire = (Player, string|number, any) -> ()
-function LBConnection.Fire(
-  Player: Player, -- Basically the player
-  ID: string|number, -- The ID to identity the callback
-  ...: any, -- Data to pass
+type LBConnection.RemoteEvent.Fire = (any) -> ()
+function LBConnection.RemoteEvent.Fire(
+	...: any
 )
 ```
-This function operates in a similar manner to `RemoteEvent:FireServer`/`RemoteEvent:FireClient`, but it does not create an additional `RemoteEvent`. Instead, the callback uses `LBConnection.CallBack`, creating a one-way connection between the client and server.
+The function operates in a similar manner to the `RemoteEvent:FireServer` and `RemoteEvent:FireClient` methods, but it converts the byte string that is passed to it into a binary string. Additionally, the callback uses the `LBConnection.RemoteEvent.CallBack` or `LBConnection.RemoteEvent.Once` method, thereby establishing a one-way communication link between the client and server.
 
 ## LBConnection.FireDistance
 ```lua
