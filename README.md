@@ -1,7 +1,5 @@
 # LB-Connection
-LB Connection is a module that offers a secure alternative to using `RemoteEvent`, `RemoteFunction`, `BindableEvent`, and `BindableFunction` in Roblox Studio. It is specifically designed and coded to function within the Roblox Studio environment.
-
-#### Note that the following API are for Version 1.0 only
+LB Connection is a `modulescript` that offers an alternative to using `RemoteEvent`, `RemoteFunction`, `BindableEvent`, and `BindableFunction` in Roblox Studio. It is specifically designed and coded to function within the Roblox Studio environment.
 
 # Installation
 ### Method 1 - Quick Installation
@@ -11,17 +9,17 @@ LB Connection is a module that offers a secure alternative to using `RemoteEvent
 local Http = game:GetService("HttpService")
 local HttpEnabled = Http.HttpEnabled
 Http.HttpEnabled = true
-local rt = {"SentRemote", "InvokeSentRemote", "InvokeRecieveRemote"}
 local m = Instance.new("ModuleScript")
-m.Parent = game:GetService("Selection"):Get()[1] or game:GetService("ServerScriptService")
+m.Parent = game:GetService("Selection"):Get()[1] or game:GetService("ReplicatedStorage")
 m.Name = "LBConnection"
 m.Source = Http:GetAsync("https://raw.githubusercontent.com/LingBlackSama/LB-Connection/main/LBConnection.lua")
 game:GetService("Selection"):Set({m})
-for i = 1, 3 do
-	local r = Instance.new("RemoteEvent")
-	r.Name = rt[i]
-	r.Parent = m
-end
+local r = Instance.new("RemoteEvent")
+r.Name = "RemoteConnection"
+r.Parent = m
+local f = Instance.new("Folder")
+f.Name = "Remotes"
+f.Parent = m
 Http.HttpEnabled = HttpEnabled
 ```
 
@@ -33,14 +31,15 @@ https://github.com/LingBlackSama/LB-Connection/releases
 
   
 # API
-## LBConnection.WaitForCallBack
+## LBConnection.RemoteEvent
 ```lua
-type LBConnection: {
-  WaitForCallBack: boolean, -- Default is false
-  WaitForCallBackDuration: number, -- Default is 1
-}
+type LBConnection.RemoteEvent = (string, {RateLimit: number?, RateLimitTime: number?}) -> any
+function LBConnection.RemoteEvent(
+	Name: string,
+	Info: {RateLimit: number?, RateLimitTime: number?},
+): any
 ```
-If `LBConnection.WaitForCallBack` is set to true and the callback does not yet exist, execution will be paused for the duration specified in `LBConnection.WaitForCallBackDuration` until the callback becomes available.
+The `LBConnection.RemoteEvent` function creates a RemoteEvent object within the LB Connection. The `RateLimit` parameter represents the rate limit for the `RemoteEvent`, and the `RateLimitTime` parameter represents the duration of the rate limit.
 
 ## LBConnection.Fire
 ```lua
