@@ -50,7 +50,7 @@ function LBConnection.RemoteEvent(
   GetCallBack: () -> ((any) -> any),
 }
 ```
-The function `LBConnection.RemoteEvent` creates a `RemoteEvent` object within the LB Connection. The `RateLimit` parameter specifies the rate limit for the `RemoteEvent`, with a default value of 60 rates. The `RateLimitTime` parameter indicates the duration of the rate limit, with a default value of 1 second. When this function is called on the client, and there is no `RemoteEvent` with the specified `Name` in the folder, Remotes, it may yield until the `RemoteEvent` is created on the server. To avoid this, placing the `RemoteEvent` in the Remotes folder before the game loads are recommended.
+The function `LBConnection.RemoteEvent` creates a `RemoteEvent` object within the LB Connection. The `RateLimit` parameter specifies the rate limit for the `RemoteEvent`, with a default value of 60 rates. The `RateLimitTime` parameter indicates the duration of the rate limit, with a default value of 1 second. When this function is called on the client, and there is no `RemoteEvent` with the specified `Name` in the folder, Remotes, it may yield until the `RemoteEvent` is created on the server. To avoid this, placing the `RemoteEvent` in the Remotes folder before the game loads are recommended. The `Info` parameter is optional and does not need to be defined if you are not going to send the package with it.
 
 ## LBConnection.RemoteEvent.Fire
 ```lua
