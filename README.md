@@ -35,8 +35,8 @@ https://github.com/LingBlackSama/LB-Connection/releases
 ```lua
 type LBConnection.RemoteEvent = (string, {RateLimit: number?, RateLimitTime: number?}) -> any
 function LBConnection.RemoteEvent(
-  Name: string,
-  Info: {RateLimit: number?, RateLimitTime: number?},
+  Name: string, -- Name of the RemoteEvent
+  Info: {RateLimit: number?, RateLimitTime: number?}, -- Optional: Information table
 ): {
   _Name: string,
   _Remote: nil|RemoteEvent,
@@ -50,7 +50,7 @@ function LBConnection.RemoteEvent(
   GetCallBack: () -> ((any) -> any),
 }
 ```
-The `LBConnection.RemoteEvent` function creates a LB RemoteEvent object within the LB Connection. The `RateLimit` parameter represents the rate limit for the `RemoteEvent`, and the `RateLimitTime` parameter represents the duration of the rate limit.
+The function `LBConnection.RemoteEvent` creates a `RemoteEvent` object within the LB Connection. The `RateLimit` parameter specifies the rate limit for the `RemoteEvent`, with a default value of 60 rates. The `RateLimitTime` parameter indicates the duration of the rate limit, with a default value of 1 second. When this function is called on the client, and there is no `RemoteEvent` with the specified `Name` in the folder, Remotes, it may yield until the `RemoteEvent` is created on the server. To avoid this, placing the `RemoteEvent` in the Remotes folder before the game loads are recommended.
 
 ## LBConnection.RemoteEvent.Fire
 ```lua
