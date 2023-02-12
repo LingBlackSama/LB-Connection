@@ -135,23 +135,23 @@ function LBConnection.RemoteFunction(
   Info: {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}, -- Optional: Information table
 ): {
   _Name: string,
-	_TimeOut: number,
+  _TimeOut: number,
   _Sent: nil|RemoteEvent,
-	_Receive: nil|RemoteEvent,
-	Invoke: (Player, any) -> (boolean, any?),
-	InvokeCallBack: ((any) -> any) -> (((any) -> any)),
-	GetInvokeCallBack: () -> ((any) -> any),
+  _Receive: nil|RemoteEvent,
+  Invoke: (Player, any) -> (boolean, any?),
+  InvokeCallBack: ((any) -> any) -> (((any) -> any)),
+  GetInvokeCallBack: () -> ((any) -> any),
 }
 ```
 The function `LBConnection.RemoteFunction` creates a LB RemoteFunction object within the LB Connection. It utilizes two `RemoteEvent` to simulate the behavior of a `RemoteFunction`. The `RateLimit` parameter specifies the rate in the rate limit for the LB RemoteFunction, while the `RateLimitTime` parameter indicates the duration of the rate limit. The `TimeOut` parameter defines the timeout duration for the LB RemoteFunction. The `TimeOut` parameter does not need to be defined if you will not send the package with it.
 
 ## LBConnection.RemoteFunction.Invoke
 ```lua
-type LBConnection.RemoteFunction.Invoke = ((any) -> any): ((any) -> any)) -> ()
+type LBConnection.RemoteFunction.Invoke = ((any) -> any): ((any) -> any)) -> (boolean, any?)
 function LBConnection.RemoteFunction.Invoke(
   plr: Player,
   ...: any,
-)
+): (boolean, any?)
 ```
 
 ## LBConnection.RemoteFunction.InvokeCallBack
@@ -160,6 +160,101 @@ type LBConnection.RemoteFunction.InvokeCallBack = ((any) -> any): ((any) -> any)
 function LBConnection.RemoteFunction.InvokeCallBack(
   CallBack: (any) -> any): ((any) -> any)),
 )
+```
+
+## LBConnection.RemoteFunction.GetInvokeCallBack
+```lua
+type LBConnection.RemoteFunction.GetInvokeCallBack = () -> ((any) -> any)
+function LBConnection.RemoteFunction.GetInvokeCallBack(): ((any) -> any)
+```
+
+## LBConnection.Bindable
+```lua
+type LBConnection.RemoteFunction = (string, {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}) -> any
+function LBConnection.RemoteFunction(
+  Name: string, -- Name of the RemoteFunction
+  Info: {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}, -- Optional: Information table
+): {
+  _Name: string,
+  _TimeOut: number,
+  _Receive: nil|(any) -> (boolean, any?),
+  Fire: (any) -> (),
+  Invoke: (any) -> (boolean, any?),
+  CallBack: ((any) -> any) -> ((any) -> any),
+  InvokeCallBack: ((any) -> any) -> ((any) -> any),
+  GetCallBack: () -> ((any) -> any),
+  GetInvokeCallBack: () -> ((any) -> any),
+}
+```
+
+## LBConnection.Bindable.Fire
+```lua
+type LBConnection.Bindable.Fire = (any) -> ()
+function LBConnection.Bindable.Fire(
+  ...: any,
+)
+```
+
+## LBConnection.Bindable.Invoke
+```lua
+type LBConnection.Bindable.Invoke = (any) -> (boolean, any?)
+function LBConnection.Bindable.Invoke(
+  ...: any,
+): (boolean, any?)
+```
+
+## LBConnection.Bindable.CallBack
+```lua
+type LBConnection.Bindable.CallBack = ((any) -> any) -> ((any) -> any)
+function LBConnection.Bindable.CallBack(
+  CallBack: (any) -> any,
+): ((any) -> any)
+```
+
+## LBConnection.Bindable.InvokeCallBack
+```lua
+type LBConnection.Bindable.InvokeCallBack = ((any) -> any) -> ((any) -> any)
+function LBConnection.Bindable.InvokeCallBack(
+  CallBack: (any) -> any,
+): ((any) -> any)
+```
+
+## LBConnection.Bindable.GetCallBack
+```lua
+type LBConnection.Bindable.GetCallBack = () -> ((any) -> any)
+function LBConnection.Bindable.GetCallBack(): ((any) -> any)
+```
+
+## LBConnection.Bindable.GetInvokeCallBack
+```lua
+type LBConnection.Bindable.GetInvokeCallBack = ((any) -> any) -> ((any) -> any)
+function LBConnection.Bindable.GetInvokeCallBack(
+  CallBack: (any) -> any,
+): ((any) -> any)
+```
+
+## LBConnection.GetRemoteEvent
+```lua
+type LBConnection.GetRemoteEvent = (string): any
+function LBConnection.GetRemoteEvent(
+  Name: string,
+): any
+```
+
+## LBConnection.GetRemoteFunction
+```lua
+type LBConnection.GetRemoteFunction = (string): any
+function LBConnection.GetRemoteFunction(
+  Name: string,
+): any
+```
+
+## LBConnection.GetBindable
+```lua
+type LBConnection.GetBindable = (string): any
+function LBConnection.GetBindable(
+  Name: string,
+): any
 ```
 
 ## LBConnection.FireBindable
