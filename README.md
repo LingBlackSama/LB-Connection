@@ -24,7 +24,7 @@ Http.HttpEnabled = HttpEnabled
 ```
 
 ### Method 2 - Download from Roblox Marketplace (Not updated yet)
-~~https://www.roblox.com/library/11948403956/LB-Connection-Version-1-0~~
+https://www.roblox.com/library/11948403956/LB-Connection-v2-0-0-beta
 
 ### Method 3 - Download from Releases
 https://github.com/LingBlackSama/LB-Connection/releases
