@@ -153,6 +153,8 @@ function LBConnection.RemoteFunction.Invoke(
   ...: any,
 ): (boolean, any?)
 ```
+This function operates in a similar manner to `RemoteFunction`, but it does not create an additional `RemoteFunction` and uses `LBConnection.RemoteFunction.InvokeCallBack` as a callback. It runs faster than `RemoteFunction`. The `TimeOut` parameter will pause execution until the specified time in seconds has elapsed. If data is received during this time, the function will return as true along with the data. If no data is received, the function will return as false.
+
 
 ## LBConnection.RemoteFunction.InvokeCallBack
 ```lua
@@ -161,12 +163,14 @@ function LBConnection.RemoteFunction.InvokeCallBack(
   CallBack: (any) -> any): ((any) -> any)),
 )
 ```
+The function sets the RemoteFunction invoke callBack to `CallBack` function
 
 ## LBConnection.RemoteFunction.GetInvokeCallBack
 ```lua
 type LBConnection.RemoteFunction.GetInvokeCallBack = () -> ((any) -> any)
 function LBConnection.RemoteFunction.GetInvokeCallBack(): ((any) -> any)
 ```
+The function returns the callback that was set with `LBConnection.RemoteFunction.InvokeCallBack`.
 
 ## LBConnection.Bindable
 ```lua
@@ -194,6 +198,8 @@ function LBConnection.Bindable.Fire(
   ...: any,
 )
 ```
+This function operates in a similar manner to `BindableEvent`, but the callback uses `LBConnection.Bindable.CallBack`. Additionally, it does not create an additional `BindableEvent`, which makes the function run faster, prevents memory leaks, and is not resource-intensive.
+
 
 ## LBConnection.Bindable.Invoke
 ```lua
@@ -202,6 +208,7 @@ function LBConnection.Bindable.Invoke(
   ...: any,
 ): (boolean, any?)
 ```
+This function operates in a similar manner to `BindableFunction`, but it does not create an additional `BindableFunction` and uses `LBConnection.Bindable.InvokeCallBack` as a callback. It runs faster than `BindableFunction`. The `TimeOut` parameter will pause execution until the specified time in seconds has elapsed. If data is received during this time, the function will return as true along with the data. If no data is received, the function will return as false.
 
 ## LBConnection.Bindable.CallBack
 ```lua
@@ -210,6 +217,7 @@ function LBConnection.Bindable.CallBack(
   CallBack: (any) -> any,
 ): ((any) -> any)
 ```
+The function sets the Bindable callBack to `CallBack` function
 
 ## LBConnection.Bindable.InvokeCallBack
 ```lua
@@ -218,12 +226,14 @@ function LBConnection.Bindable.InvokeCallBack(
   CallBack: (any) -> any,
 ): ((any) -> any)
 ```
+The function sets the Bindable invoke callBack to `CallBack` function
 
 ## LBConnection.Bindable.GetCallBack
 ```lua
 type LBConnection.Bindable.GetCallBack = () -> ((any) -> any)
 function LBConnection.Bindable.GetCallBack(): ((any) -> any)
 ```
+The function returns the callback that was set with `LBConnection.Bindable.CallBack`.
 
 ## LBConnection.Bindable.GetInvokeCallBack
 ```lua
@@ -232,6 +242,7 @@ function LBConnection.Bindable.GetInvokeCallBack(
   CallBack: (any) -> any,
 ): ((any) -> any)
 ```
+The function returns the callback that was set with `LBConnection.Bindable.InvokeCallBack`.
 
 ## LBConnection.GetRemoteEvent
 ```lua
@@ -240,6 +251,7 @@ function LBConnection.GetRemoteEvent(
   Name: string,
 ): any
 ```
+Return the LB RemoteEvent
 
 ## LBConnection.GetRemoteFunction
 ```lua
@@ -248,6 +260,7 @@ function LBConnection.GetRemoteFunction(
   Name: string,
 ): any
 ```
+Return the LB RemoteFunction
 
 ## LBConnection.GetBindable
 ```lua
@@ -256,25 +269,4 @@ function LBConnection.GetBindable(
   Name: string,
 ): any
 ```
-
-## LBConnection.FireBindable
-```lua
-type LBConnection.FireBindable = (string|number, any) -> any
-function LBConnection.FireBindable(
-  ID: string|number, -- The ID to identity the callback
-  ...: any, -- Data to pass
-): ...: any
-```
-This function operates in a similar manner to `BindableEvent` and `BindableFunction`, but the callback uses `LBConnection.CallBack`. Additionally, it does not create an additional `BindableEvent` or `BindableFunction`, which makes the function run faster, prevents memory leaks, and is not resource-intensive.
-
-## LBConnection.Invoke
-```lua
-type LBConnection.Invoke = (Player, string|number, number, any) -> (boolean, any)
-function LBConnection.Invoke(
-  plr: Player, -- Basically the player
-  ID: string|number, -- The ID to identity the callback
-  TimeOut: number, -- Yield until TimeOut is reached (given in seconds).
-  ...: any, -- Data to pass
-): CallbackState: boolean, Data: any
-```
-This function operates in a similar manner to `RemoteFunction`, but it does not create an additional `RemoteFunction` and uses `LBConnection.CallBack` as a callback. It runs faster than `RemoteFunction`. The `TimeOut` parameter will pause execution until the specified time in seconds has elapsed. If data is received during this time, the `CallbackState` will return as true along with the data. If no data is received, the `CallbackState` will return as false.
+Return the LB Bindable
