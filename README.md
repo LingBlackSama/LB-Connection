@@ -174,8 +174,8 @@ The function returns the callback that was set with `LBConnection.RemoteFunction
 
 ## LBConnection.Bindable
 ```lua
-type LBConnection.RemoteFunction = (string, {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}) -> any
-function LBConnection.RemoteFunction(
+type LBConnection.Bindable = (string, {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}) -> any
+function LBConnection.Bindable(
   Name: string, -- Name of the RemoteFunction
   Info: {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}, -- Optional: Information table
 ): {
@@ -190,6 +190,8 @@ function LBConnection.RemoteFunction(
   GetInvokeCallBack: () -> ((any) -> any),
 }
 ```
+The function `LBConnection.Bindable` creates a LB Bindable object within the LB Connection. It does not creating an additional BindableEvent or BindableFunction. The `RateLimit` parameter specifies the rate in the rate limit for the LB Bindable, while the `RateLimitTime` parameter indicates the duration of the rate limit. The `TimeOut` parameter defines the timeout duration for the LB Bindable. The `TimeOut` parameter does not need to be defined if you will not send the package with it.
+
 
 ## LBConnection.Bindable.Fire
 ```lua
