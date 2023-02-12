@@ -50,7 +50,7 @@ function LBConnection.RemoteEvent(
   GetCallBack: () -> ((any) -> any),
 }
 ```
-The function `LBConnection.RemoteEvent` creates a `RemoteEvent` object within the LB Connection. The `RateLimit` parameter specifies the rate limit for the `RemoteEvent`, with a default value of 60 rates. The `RateLimitTime` parameter indicates the duration of the rate limit, with a default value of 1 second. When this function is called on the client, and there is no `RemoteEvent` with the specified `Name` in the folder, Remotes, it may yield until the `RemoteEvent` is created on the server. To avoid this, placing the `RemoteEvent` in the Remotes folder before the game loads are recommended. The `Info` parameter is optional and does not need to be defined if you are not going to send the package with it.
+The function `LBConnection.RemoteEvent` creates a `RemoteEvent` object within the LB Connection. The `RateLimit` parameter specifies the rate limit for the `RemoteEvent`, with a default value of 60 rates. The `RateLimitTime` parameter indicates the duration of the rate limit, with a default value of 1 second. When this function is called on the client, and there is no `RemoteEvent` with the specified `Name` in the folder, Remotes, it may yield until the `RemoteEvent` is created on the server. To avoid this, placing the `RemoteEvent` in the Remotes folder before the game loads are recommended. The `Info` parameter is optional and does not need to be defined if you will not send the package with it.
 
 ## LBConnection.RemoteEvent.Fire
 ```lua
@@ -131,8 +131,8 @@ The function returns the callback that was set with `LBConnection.RemoteEvent.Ca
 ```lua
 type LBConnection.RemoteFunction = (string, {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}) -> any
 function LBConnection.RemoteFunction(
-  Name: string,
-  Info: {RateLimit: number?, RateLimitTime: number?},
+  Name: string, -- Name of the RemoteFunction
+  Info: {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}, -- Optional: Information table
 ): {
   _Name: string,
 	_TimeOut: number,
@@ -143,7 +143,24 @@ function LBConnection.RemoteFunction(
 	GetInvokeCallBack: () -> ((any) -> any),
 }
 ```
-The function `LBConnection.RemoteFunction` creates a LB RemoteFunction object within the LB Connection. It utilizes two `RemoteEvent` to simulate the behavior of a `RemoteFunction`. The `RateLimit` parameter specifies the rate limit for the LB RemoteFunction, while the `RateLimitTime` parameter indicates the duration of the rate limit. The `TimeOut` parameter defines the timeout duration for the LB RemoteFunction.
+The function `LBConnection.RemoteFunction` creates a LB RemoteFunction object within the LB Connection. It utilizes two `RemoteEvent` to simulate the behavior of a `RemoteFunction`. The `RateLimit` parameter specifies the rate in the rate limit for the LB RemoteFunction, while the `RateLimitTime` parameter indicates the duration of the rate limit. The `TimeOut` parameter defines the timeout duration for the LB RemoteFunction. The `TimeOut` parameter does not need to be defined if you will not send the package with it.
+
+## LBConnection.RemoteFunction.Invoke
+```lua
+type LBConnection.RemoteFunction.Invoke = ((any) -> any): ((any) -> any)) -> ()
+function LBConnection.RemoteFunction.Invoke(
+  plr: Player,
+  ...: any,
+)
+```
+
+## LBConnection.RemoteFunction.InvokeCallBack
+```lua
+type LBConnection.RemoteFunction.InvokeCallBack = ((any) -> any): ((any) -> any)) -> ()
+function LBConnection.RemoteFunction.InvokeCallBack(
+  CallBack: (any) -> any): ((any) -> any)),
+)
+```
 
 ## LBConnection.FireBindable
 ```lua
