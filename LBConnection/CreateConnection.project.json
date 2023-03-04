@@ -1,7 +1,0 @@
-{
-    "name": "CreateConnection",
-    "tree": {
-        "$className": "RemoteEvent",
-        "$properties": {}
-    }
-}
