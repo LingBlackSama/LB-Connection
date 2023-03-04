@@ -12,7 +12,7 @@ Http.HttpEnabled = true
 local m = Instance.new("ModuleScript")
 m.Parent = game:GetService("Selection"):Get()[1] or game:GetService("ReplicatedStorage")
 m.Name = "LBConnection"
-m.Source = Http:GetAsync("https://raw.githubusercontent.com/LingBlackSama/LB-Connection/main/LBConnection.lua")
+m.Source = Http:GetAsync("https://raw.githubusercontent.com/LingBlackSama/LB-Connection/main/LBConnection/init.lua")
 game:GetService("Selection"):Set({m})
 local r = Instance.new("RemoteEvent")
 r.Name = "RemoteConnection"
