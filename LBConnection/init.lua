@@ -116,8 +116,6 @@ local function Packed(DataTree: any): {}
 		local DataType = type(Data);
 		if (DataType == "string") then
 			DataTree[Index] = string.pack("s1", Data);
-		elseif (DataType == "table") then
-			DataTree[Index] = Packed(Data);
 		else
 			DataTree[Index] = Data;
 		end
@@ -130,8 +128,6 @@ local function Unpacked(DataTree: any): {}
 		local DataType = type(Data);
 		if (DataType == "string") then
 			DataTree[Index] = string.unpack("s1", Data);
-		elseif (DataType == "table") then
-			DataTree[Index] = Unpacked(Data);
 		else
 			DataTree[Index] = Data;
 		end
@@ -178,8 +174,7 @@ local function _GetCallBack(Name: string, CallBackType: {}): any
 end
 
 local function ReceiveListener(plr: Player, ID: string, CallBackState: boolean, ...: any)
-	local UnpackedID: string = string.unpack("s1", ID)
-	local EventListener: (Player, boolean, any) -> any = RemoteFunctionsCallBackList[string.unpack("H", UnpackedID)];
+	local EventListener: (Player, boolean, any) -> any = RemoteFunctionsCallBackList[ID];
 	if (not EventListener) then return end;
 	EventListener(plr, CallBackState, unpack(Unpacked({...})));
 end
@@ -202,7 +197,6 @@ local function SentListener(self: any, ID: string,  ...: any)
 	YieldTilObject(self._Name, RemoteFunctionsCallBackList);
 	local CallBack: any = self.GetInvokeCallBack();
 	local Data: any = {...};
-	ID = string.unpack("s1", ID);
 	if (CallBack) then
 		if (IsServer) then
 			local plr: Player = Data[1];
@@ -382,7 +376,6 @@ function LBConnection.RemoteFunction(Name: string, Info: {TimeOut: number?, Rate
 		end)
 
 		task.spawn(function(...: any)
-			ID = string.pack("H", ID);
 			if (IsServer) then
 				_Fire(self._Sent, plr, ID, ...);
 			else
