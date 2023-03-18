@@ -127,6 +127,15 @@ function LBConnection.RemoteEvent.GetCallBack(): ((any) -> any)
 ```
 The function returns the callback that was set with `LBConnection.RemoteEvent.CallBack`.
 
+## LBConnection.RemoteEvent.Set
+```lua
+type LBConnection.RemoteEvent.Set = ({[string]: any}) -> ()
+function LBConnection.RemoteEvent.Set(
+  SetInfo: {[string]: any}
+)
+```
+This function is as same as the second parameter of `LBConnection.RemoteEvent`.
+
 ## LBConnection.RemoteFunction
 ```lua
 type LBConnection.RemoteFunction = (string, {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}) -> any
@@ -171,6 +180,15 @@ type LBConnection.RemoteFunction.GetInvokeCallBack = () -> ((any) -> any)
 function LBConnection.RemoteFunction.GetInvokeCallBack(): ((any) -> any)
 ```
 The function returns the callback that was set with `LBConnection.RemoteFunction.InvokeCallBack`.
+
+## LBConnection.RemoteFunction.Set
+```lua
+type LBConnection.RemoteFunction.Set = ({[string]: any}) -> ()
+function LBConnection.RemoteFunction.Set(
+  SetInfo: {[string]: any}
+)
+```
+This function is as same as the second parameter of `LBConnection.RemoteFunction`.
 
 ## LBConnection.Bindable
 ```lua
@@ -245,6 +263,15 @@ function LBConnection.Bindable.GetInvokeCallBack(
 ): ((any) -> any)
 ```
 The function returns the callback that was set with `LBConnection.Bindable.InvokeCallBack`.
+
+## LBConnection.Bindable.Set
+```lua
+type LBConnection.Bindable.Set = ({[string]: any}) -> ()
+function LBConnection.Bindable.Set(
+  SetInfo: {[string]: any}
+)
+```
+This function is as same as the second parameter of `LBConnection.Bindable`.
 
 ## LBConnection.GetRemoteEvent
 ```lua
