@@ -24,7 +24,7 @@ Http.HttpEnabled = HttpEnabled
 ```
 
 ### Method 2 - Download from Roblox Marketplace
-[https://www.roblox.com/library/11948403956/LB-Connection-v2-0-1-beta](https://www.roblox.com/library/11948403956/LB-Connection-v2-0-1-beta)
+[https://www.roblox.com/library/11948403956/LB-Connection-v2-2-0-beta](https://www.roblox.com/library/11948403956/LB-Connection-v2-2-0-beta)
 
 ### Method 3 - Download from Releases
 https://github.com/LingBlackSama/LB-Connection/releases
@@ -52,85 +52,85 @@ function LBConnection.RemoteEvent(
 ```
 The function `LBConnection.RemoteEvent` creates a `RemoteEvent` object within the LB Connection. The `RateLimit` parameter specifies the rate limit for the `RemoteEvent`, with a default value of 60 rates. The `RateLimitTime` parameter indicates the duration of the rate limit, with a default value of 1 second. When this function is called on the client, and there is no `RemoteEvent` with the specified `Name` in the folder, Remotes, it may yield until the `RemoteEvent` is created on the server. To avoid this, placing the `RemoteEvent` in the Remotes folder before the game loads are recommended. The `Info` parameter is optional and does not need to be defined if you will not send the package with it.
 
-## LBConnection.RemoteEvent.Fire
+## LBConnection.RemoteEvent:Fire
 ```lua
-type LBConnection.RemoteEvent.Fire = (any) -> ()
-function LBConnection.RemoteEvent.Fire(
+type LBConnection.RemoteEvent:Fire = (any) -> ()
+function LBConnection.RemoteEvent:Fire(
   ...: any
 )
 ```
-The function operates in a similar manner to the `RemoteEvent:FireServer` and `RemoteEvent:FireClient` methods, but it converts the byte string that is passed to it into a binary string. Additionally, the callback uses the `LBConnection.RemoteEvent.CallBack` or `LBConnection.RemoteEvent.Once` method, thereby establishing a one-way communication link between the client and server. If the function is called on the server, it is necessary to pass the `Player` as the first argument.
+The function operates in a similar manner to the `RemoteEvent:FireServer` and `RemoteEvent:FireClient` methods, but it converts the byte string that is passed to it into a binary string. Additionally, the callback uses the `LBConnection.RemoteEvent:CallBack` or `LBConnection.RemoteEvent:Once` method, thereby establishing a one-way communication link between the client and server. If the function is called on the server, it is necessary to pass the `Player` as the first argument.
 
-## LBConnection.RemoteEvent.FireAll [Server only]
+## LBConnection.RemoteEvent:FireAll [Server only]
 ```lua
-type LBConnection.RemoteEvent.FireAll = (any) -> ()
-function LBConnection.RemoteEvent.FireAll(
+type LBConnection.RemoteEvent:FireAll = (any) -> ()
+function LBConnection.RemoteEvent:FireAll(
  ...: any
 )
 ```
-This function operates in a similar manner to `RemoteEvent:FireAllClients`. The callback uses callback uses the `LBConnection.RemoteEvent.CallBack` or `LBConnection.RemoteEvent.Once` method.
+This function operates in a similar manner to `RemoteEvent:FireAllClients`. The callback uses callback uses the `LBConnection.RemoteEvent:CallBack` or `LBConnection.RemoteEvent:Once` method.
 
-## LBConnection.RemoteEvent.FireTo [Server only]
+## LBConnection.RemoteEvent:FireTo [Server only]
 ```lua
-type LBConnection.RemoteEvent.FireTo = ({Player}, any) -> ()
-function LBConnection.RemoteEvent.FireTo(
+type LBConnection.RemoteEvent:FireTo = ({Player}, any) -> ()
+function LBConnection.RemoteEvent:FireTo(
   PlayerArray: {Player},
   ...: any,
 )
 ```
-This function operates in a similar manner to `LBConnection.RemoteEvent.FireAll`, but it includes a filter list to exclude certain players from being fired.
+This function operates in a similar manner to `LBConnection.RemoteEvent:FireAll`, but it includes a filter list to exclude certain players from being fired.
 
-## LBConnection.RemoteEvent.FireAllExcept [Server only]
+## LBConnection.RemoteEvent:FireAllExcept [Server only]
 ```lua
-type LBConnection.RemoteEvent.FireAllExcept = ({Player}, any) -> ()
-function LBConnection.RemoteEvent.FireAllExcept(
+type LBConnection.RemoteEvent:FireAllExcept = ({Player}, any) -> ()
+function LBConnection.RemoteEvent:FireAllExcept(
   PlayerArray: {Player},
   ...: any,
 )
 ```
-This function operates in a similar manner to `LBConnection.RemoteEvent.FireAll`, but it includes a filter list to exclude certain players from being fired.
+This function operates in a similar manner to `LBConnection.RemoteEvent:FireAll`, but it includes a filter list to exclude certain players from being fired.
 
 
-## LBConnection.RemoteEvent.FireDistance [Server only]
+## LBConnection.RemoteEvent:FireDistance [Server only]
 ```lua
-type LBConnection.RemoteEvent.FireDistance = (Player, number, any) -> ()
-function LBConnection.RemoteEvent.FireDistance(
+type LBConnection.RemoteEvent:FireDistance = (Player, number, any) -> ()
+function LBConnection.RemoteEvent:FireDistance(
   plr: Player,
   RenderDistance: number,
   ...: any,
 )
 ```
-This function operates in a similar manner to `LBConnection.RemoteEvent.Fire`, but with a slight variation. It has the capability to search for all players within a specific radius range.
+This function operates in a similar manner to `LBConnection.RemoteEvent:Fire`, but with a slight variation. It has the capability to search for all players within a specific radius range.
 
-## LBConnection.RemoteEvent.CallBack
+## LBConnection.RemoteEvent:CallBack
 ```lua
-type LBConnection.RemoteEvent.CallBack = ((any) -> any) -> ((any) -> any)
-function LBConnection.RemoteEvent.CallBack(
+type LBConnection.RemoteEvent:CallBack = ((any) -> any) -> ((any) -> any)
+function LBConnection.RemoteEvent:CallBack(
   CallBack: (any) -> any
 ): ((any) -> any)
 ```
 The function sets the RemoteEvent callback to `CallBack` function
 
-## LBConnection.RemoteEvent.Once
+## LBConnection.RemoteEvent:Once
 ```lua
-type LBConnection.RemoteEvent.Once = ((any) -> any) -> ((any) -> any)
-function LBConnection.RemoteEvent.Once(
+type LBConnection.RemoteEvent:Once = ((any) -> any) -> ((any) -> any)
+function LBConnection.RemoteEvent:Once(
   CallBack: (any) -> any
 ): ((any) -> any)
 ```
-This function operates in a manner similar to `LBConnection.RemoteEvent.CallBack`, however, it will only be called once.
+This function operates in a manner similar to `LBConnection.RemoteEvent:CallBack`, however, it will only be called once.
 
-## LBConnection.RemoteEvent.GetCallBack
+## LBConnection.RemoteEvent:GetCallBack
 ```lua
-type LBConnection.RemoteEvent.GetCallBack = () -> ((any) -> any)
-function LBConnection.RemoteEvent.GetCallBack(): ((any) -> any)
+type LBConnection.RemoteEvent:GetCallBack = () -> ((any) -> any)
+function LBConnection.RemoteEvent:GetCallBack(): ((any) -> any)
 ```
-The function returns the callback that was set with `LBConnection.RemoteEvent.CallBack`.
+The function returns the callback that was set with `LBConnection.RemoteEvent:CallBack`.
 
-## LBConnection.RemoteEvent.Set
+## LBConnection.RemoteEvent:Set
 ```lua
-type LBConnection.RemoteEvent.Set = ({[string]: any}) -> ()
-function LBConnection.RemoteEvent.Set(
+type LBConnection.RemoteEvent:Set = ({[string]: any}) -> ()
+function LBConnection.RemoteEvent:Set(
   SetInfo: {[string]: any}
 )
 ```
@@ -154,34 +154,34 @@ function LBConnection.RemoteFunction(
 ```
 The function `LBConnection.RemoteFunction` creates a LB RemoteFunction object within the LB Connection. It utilizes two `RemoteEvent` to simulate the behavior of a `RemoteFunction`. The `RateLimit` parameter specifies the rate in the rate limit for the LB RemoteFunction, while the `RateLimitTime` parameter indicates the duration of the rate limit. The `TimeOut` parameter defines the timeout duration for the LB RemoteFunction. The `TimeOut` parameter does not need to be defined if you will not send the package with it.
 
-## LBConnection.RemoteFunction.Invoke
+## LBConnection.RemoteFunction:Invoke
 ```lua
-type LBConnection.RemoteFunction.Invoke = ((any) -> any): ((any) -> any)) -> (boolean, any?)
-function LBConnection.RemoteFunction.Invoke(
+type LBConnection.RemoteFunction:Invoke = ((any) -> any): ((any) -> any)) -> (boolean, any?)
+function LBConnection.RemoteFunction:Invoke(
   plr: Player,
   ...: any,
 ): (boolean, any?)
 ```
-This function operates in a similar manner to `RemoteFunction`, but it does not create an additional `RemoteFunction` and uses `LBConnection.RemoteFunction.InvokeCallBack` as a callback. It runs faster than `RemoteFunction`. The `TimeOut` parameter will pause execution until the specified time in seconds has elapsed. If data is received during this time, the function will return as true along with the data. If no data is received, the function will return as false.
+This function operates in a similar manner to `RemoteFunction`, but it does not create an additional `RemoteFunction` and uses `LBConnection.RemoteFunction:InvokeCallBack` as a callback. It runs faster than `RemoteFunction`. The `TimeOut` parameter will pause execution until the specified time in seconds has elapsed. If data is received during this time, the function will return as true along with the data. If no data is received, the function will return as false.
 
 
-## LBConnection.RemoteFunction.InvokeCallBack
+## LBConnection.RemoteFunction:InvokeCallBack
 ```lua
-type LBConnection.RemoteFunction.InvokeCallBack = ((any) -> any): ((any) -> any)) -> ()
-function LBConnection.RemoteFunction.InvokeCallBack(
+type LBConnection.RemoteFunction:InvokeCallBack = ((any) -> any): ((any) -> any)) -> ()
+function LBConnection.RemoteFunction:InvokeCallBack(
   CallBack: (any) -> any): ((any) -> any)),
 )
 ```
 The function sets the RemoteFunction invoke callBack to `CallBack` function
 
-## LBConnection.RemoteFunction.GetInvokeCallBack
+## LBConnection.RemoteFunction:GetInvokeCallBack
 ```lua
-type LBConnection.RemoteFunction.GetInvokeCallBack = () -> ((any) -> any)
-function LBConnection.RemoteFunction.GetInvokeCallBack(): ((any) -> any)
+type LBConnection.RemoteFunction:GetInvokeCallBack = () -> ((any) -> any)
+function LBConnection.RemoteFunction:GetInvokeCallBack(): ((any) -> any)
 ```
-The function returns the callback that was set with `LBConnection.RemoteFunction.InvokeCallBack`.
+The function returns the callback that was set with `LBConnection.RemoteFunction:InvokeCallBack`.
 
-## LBConnection.RemoteFunction.Set
+## LBConnection.RemoteFunction:Set
 ```lua
 type LBConnection.RemoteFunction.Set = ({[string]: any}) -> ()
 function LBConnection.RemoteFunction.Set(
@@ -211,63 +211,63 @@ function LBConnection.Bindable(
 The function `LBConnection.Bindable` creates a LB Bindable object within the LB Connection. It does not creating an additional BindableEvent or BindableFunction. The `RateLimit` parameter specifies the rate in the rate limit for the LB Bindable, while the `RateLimitTime` parameter indicates the duration of the rate limit. The `TimeOut` parameter defines the timeout duration for the LB Bindable. The `TimeOut` parameter does not need to be defined if you will not send the package with it.
 
 
-## LBConnection.Bindable.Fire
+## LBConnection.Bindable:Fire
 ```lua
-type LBConnection.Bindable.Fire = (any) -> ()
-function LBConnection.Bindable.Fire(
+type LBConnection.Bindable:Fire = (any) -> ()
+function LBConnection.Bindable:Fire(
   ...: any,
 )
 ```
-This function operates in a similar manner to `BindableEvent`, but the callback uses `LBConnection.Bindable.CallBack`. Additionally, it does not create an additional `BindableEvent`, which makes the function run faster, prevents memory leaks, and is not resource-intensive.
+This function operates in a similar manner to `BindableEvent`, but the callback uses `LBConnection.Bindable:CallBack`. Additionally, it does not create an additional `BindableEvent`, which makes the function run faster, prevents memory leaks, and is not resource-intensive.
 
 
-## LBConnection.Bindable.Invoke
+## LBConnection.Bindable:Invoke
 ```lua
-type LBConnection.Bindable.Invoke = (any) -> (boolean, any?)
-function LBConnection.Bindable.Invoke(
+type LBConnection.Bindable:Invoke = (any) -> (boolean, any?)
+function LBConnection.Bindable:Invoke(
   ...: any,
 ): (boolean, any?)
 ```
-This function operates in a similar manner to `BindableFunction`, but it does not create an additional `BindableFunction` and uses `LBConnection.Bindable.InvokeCallBack` as a callback. It runs faster than `BindableFunction`. The `TimeOut` parameter will pause execution until the specified time in seconds has elapsed. If data is received during this time, the function will return as true along with the data. If no data is received, the function will return as false.
+This function operates in a similar manner to `BindableFunction`, but it does not create an additional `BindableFunction` and uses `LBConnection.Bindable:InvokeCallBack` as a callback. It runs faster than `BindableFunction`. The `TimeOut` parameter will pause execution until the specified time in seconds has elapsed. If data is received during this time, the function will return as true along with the data. If no data is received, the function will return as false.
 
-## LBConnection.Bindable.CallBack
+## LBConnection.Bindable:CallBack
 ```lua
-type LBConnection.Bindable.CallBack = ((any) -> any) -> ((any) -> any)
-function LBConnection.Bindable.CallBack(
+type LBConnection.Bindable:CallBack = ((any) -> any) -> ((any) -> any)
+function LBConnection.Bindable:CallBack(
   CallBack: (any) -> any,
 ): ((any) -> any)
 ```
 The function sets the Bindable callBack to `CallBack` function
 
-## LBConnection.Bindable.InvokeCallBack
+## LBConnection.Bindable:InvokeCallBack
 ```lua
-type LBConnection.Bindable.InvokeCallBack = ((any) -> any) -> ((any) -> any)
-function LBConnection.Bindable.InvokeCallBack(
+type LBConnection.Bindable:InvokeCallBack = ((any) -> any) -> ((any) -> any)
+function LBConnection.Bindable:InvokeCallBack(
   CallBack: (any) -> any,
 ): ((any) -> any)
 ```
 The function sets the Bindable invoke callBack to `CallBack` function
 
-## LBConnection.Bindable.GetCallBack
+## LBConnection.Bindable:GetCallBack
 ```lua
-type LBConnection.Bindable.GetCallBack = () -> ((any) -> any)
-function LBConnection.Bindable.GetCallBack(): ((any) -> any)
+type LBConnection.Bindable:GetCallBack = () -> ((any) -> any)
+function LBConnection.Bindable:GetCallBack(): ((any) -> any)
 ```
-The function returns the callback that was set with `LBConnection.Bindable.CallBack`.
+The function returns the callback that was set with `LBConnection.Bindable:CallBack`.
 
-## LBConnection.Bindable.GetInvokeCallBack
+## LBConnection.Bindable:GetInvokeCallBack
 ```lua
-type LBConnection.Bindable.GetInvokeCallBack = ((any) -> any) -> ((any) -> any)
-function LBConnection.Bindable.GetInvokeCallBack(
+type LBConnection.Bindable:GetInvokeCallBack = ((any) -> any) -> ((any) -> any)
+function LBConnection.Bindable:GetInvokeCallBack(
   CallBack: (any) -> any,
 ): ((any) -> any)
 ```
-The function returns the callback that was set with `LBConnection.Bindable.InvokeCallBack`.
+The function returns the callback that was set with `LBConnection.Bindable:InvokeCallBack`.
 
-## LBConnection.Bindable.Set
+## LBConnection.Bindable:Set
 ```lua
-type LBConnection.Bindable.Set = ({[string]: any}) -> ()
-function LBConnection.Bindable.Set(
+type LBConnection.Bindable:Set = ({[string]: any}) -> ()
+function LBConnection.Bindable:Set(
   SetInfo: {[string]: any}
 )
 ```
