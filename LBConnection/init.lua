@@ -185,7 +185,7 @@ local function _Set(self: any, SetInfo: {[string]: any})
 	end
 end
 
-local function _Get(Name: string, Table: string)
+local function _Get(Name: string, Table: string): any
 	if not LBConnection[Table][Name] then return end;
 	YieldTilObject(Name, LBConnection[Table]);
 	return LBConnection[Table][Name];
