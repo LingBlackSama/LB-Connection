@@ -26,7 +26,7 @@ type LBRemote = {
 	CallBack: (CallBack) -> CallBack,
 	Once: (CallBack) -> CallBack,
 	GetCallBack: () -> CallBack,
-	Set: ({[string]: any}) -> (),
+	Set: () -> (),
 };
 
 type LBRemoteFunction = {
@@ -37,7 +37,7 @@ type LBRemoteFunction = {
 	Invoke: (Player, any) -> (boolean, any?),
 	InvokeCallBack: ((any) -> any) -> (((any) -> any)),
 	GetInvokeCallBack: () -> ((any) -> any),
-	Set: ({[string]: any}) -> (),
+	Set: () -> (),
 };
 
 type LBBindable = {
@@ -50,7 +50,7 @@ type LBBindable = {
 	InvokeCallBack: ((any) -> any) -> ((any) -> any),
 	GetCallBack: () -> ((any) -> any),
 	GetInvokeCallBack: () -> ((any) -> any),
-	Set: ({[string]: any}) -> (),
+	Set: () -> (),
 };
 
 local RemotesFolder: any = script.Remotes;
@@ -72,6 +72,10 @@ local RemoteEventsCallBackList: CallBackList = {};
 local RemoteFunctionsCallBackList: CallBackList = {};
 local BindableEventsCallBackList: CallBackList = {};
 local BindableFunctionsCallBackList: CallBackList = {};
+
+local function GenerateNumbers(): number
+	return RNG:NextInteger(0, 65535);
+end
 
 local function CreateInstance(InstanceName: string, Parent: any, Information: {[string]: any}): any
 	local NewInstance: any = Instance.new(InstanceName);
@@ -107,12 +111,14 @@ local function CreateObject(Name: string, Info: {RateLimit: number?, RateLimitTi
 end
 
 local function YieldTilObject(Name: string, List: {})
-	local Count: number = 0;
+	local Timeout: boolean = false;
 	while (not List[Name]) do
-		if Count ~= 500 then
-			Count += 1;
+		if not Timeout then
+			Timeout = true;
 			warn(string.format("LB Connection: Waiting for %s to load...", Name));
-			task.wait();
+			task.delay(5, function()
+				Timeout = true;
+			end)
 		else
 			warn("Timeout: "..Name)
 			break;
@@ -120,18 +126,14 @@ local function YieldTilObject(Name: string, List: {})
 	end
 end
 
-local function GenerateNumbers(): number
-	return RNG:NextInteger(0, 65535);
-end
-
 local function GetNearPlayer(chr: any, Radius: number): {Player}
     local ListOfPlayersInRange: any = {};
 	local PlayerList: any = Plr:GetPlayers();
-	local hrp: any = chr.HumanoidRootPart;
+	local hrp: any = chr.PrimaryPart;
 
 	for _: number, plr: any in ipairs(PlayerList) do
 		local Chr: any = plr.Character or plr.CharacterAdded:Wait();
-		local Hrp: any = Chr.HumanoidRootPart;
+		local Hrp: any = Chr.PrimaryPart;
 
 		if chr and Chr and hrp and Hrp then
 			if (Hrp.Position - hrp.Position).Magnitude <= Radius and Chr then
@@ -183,6 +185,12 @@ local function _Set(self: any, SetInfo: {[string]: any})
 	end
 end
 
+local function _Get(Name: string, Table: string)
+	if not LBConnection[Table][Name] then return end;
+	YieldTilObject(Name, LBConnection[Table]);
+	return LBConnection[Table][Name];
+end
+
 local function _GetCallBack(Name: string, CallBackType: {}): any
 	return CallBackType[Name];
 end
@@ -204,7 +212,7 @@ end
 
 local function SentListener(self: any, ID: string,  ...: any)
 	YieldTilObject(self._Name, RemoteFunctionsCallBackList);
-	local CallBack: any = self.GetInvokeCallBack();
+	local CallBack: any = self:GetInvokeCallBack();
 	local Data: any = {...};
 	if (CallBack) then
 		if (IsServer) then
@@ -246,6 +254,167 @@ local function ClientPostSimulationListener()
 	table.clear(RequestsList);
 end
 
+local function RemoteFire(self: any, ...: any)
+	if not _RateLimit(self) then return end;
+	_Fire(self._Remote, ...);
+end
+
+local function RemoteFireTo(self: any, PlayerArray: {Player}, ...: any)
+	if not IsServer or not _RateLimit(self) then return end;
+	for _: number, Player: Player in ipairs(PlayerArray) do
+		_Fire(self._Remote, Player, ...);
+	end
+end
+
+local function RemoteFireAll(self: any, ...: any)
+	if not IsServer or not _RateLimit(self) then return end;
+	_FireAll(self._Remote, ...);
+end
+
+local function RemoteFireAllExcept(self: any, ExceptionArray: {Player}, ...: any)
+	if not IsServer or not _RateLimit(self) then return end;
+	local PlayerList: {Player} = Plr:GetPlayers();
+	for _: number, Exceptionalplr: Player in ipairs(ExceptionArray) do
+		if not table.find(PlayerList, Exceptionalplr) then return end;
+		table.remove(PlayerList, table.find(PlayerList, Exceptionalplr));
+	end
+	for _: number, Player: Player in ipairs(PlayerList) do
+		_Fire(self._Remote, Player, ...);
+	end
+end
+
+local function RemoteFireDistance(self: any, plr: Player, RenderDistance: number, ...: any)
+	if not IsServer or not _RateLimit(self) then return end;
+	local chr: any = (plr.Character and plr.Character.Parent and plr.Character) or plr.CharacterAdded:Wait();
+    RenderDistance = RenderDistance or 20;
+    local RenderPlayers: {Player} = GetNearPlayer(chr, RenderDistance);
+	for _: number, RenderPlayer: Player in ipairs(RenderPlayers) do
+		_Fire(self._Remote, RenderPlayer, ...);
+	end
+end
+
+local function RemoteCallBack(self: any, CallBack: CallBack): CallBack
+	return RemoteEventListener(self._Name, self._Remote, CallBack);
+end
+
+local function RemoteOnce(self: any, CallBack: CallBack): CallBack
+	local ListenerFunction: (any) -> () = function(...: any)
+		if RemoteEventsCallBackList[self._Name] == nil then return end;
+		task.spawn(CallBack, ...);
+		RemoteEventsCallBackList[self._Name]:Disconnect();
+		RemoteEventsCallBackList[self._Name] = nil;
+	end
+	return RemoteEventListener(self._Name, self._Remote, ListenerFunction);
+end
+
+local function RemoteGetCallBack(self: any): CallBack
+	return _GetCallBack(self._Name, RemoteEventsCallBackList);
+end
+
+local function RemoteSet(self: any, SetInfo: {[string]: any})
+	_Set(self, SetInfo);
+end
+
+local function RemoteFunctionInvoke(self: any, plr: Player, ...: any): (boolean, any?)
+	if not _RateLimit(self) then return false end;
+	local Thread: thread = coroutine.running();
+	local ID: number|string = GenerateNumbers();
+	local Resume: boolean = false;
+
+	RemoteFunctionsCallBackList[ID] = function(PlayerWhoFired: Player, CallbackState: boolean, ...: any)
+		if (PlayerWhoFired ~= plr) then return end;
+		Resume = true;
+		RemoteFunctionsCallBackList[ID] = nil;
+		if (CallbackState) then
+			task.spawn(Thread, true, ...);
+		else
+			task.spawn(Thread, false);
+		end
+	end
+
+	task.delay(self.TimeOut, function()
+		if (Resume) then return end;
+		RemoteFunctionsCallBackList[ID] = nil;
+		task.spawn(Thread, false);
+	end)
+
+	task.spawn(function(...: any)
+		if (IsServer) then
+			_Fire(self._Sent, plr, ID, ...);
+		else
+			_Fire(self._Sent, ID, ...);
+		end
+	end, ...)
+
+	return coroutine.yield();
+end
+
+local function RemoteFuncionCallBack(self: any, CallBack: CallBack): CallBack
+	RemoteFunctionsCallBackList[self._Name] = CallBack;
+	return RemoteFunctionsCallBackList[self._Name];
+end
+
+local function RemoteFunctionGetInvokeCallBack(self: any): CallBack
+	return _GetCallBack(self._Name, RemoteFunctionsCallBackList);
+end
+
+local function RemoteFunctionSet(self: any, SetInfo: {[string]: any})
+	_Set(self, SetInfo);
+end
+
+local function BindableFire(self: any, ...: any)
+	if not _RateLimit(self) then return end;
+	YieldTilObject(self._Name, BindableEventsCallBackList);
+	task.spawn(BindableEventsCallBackList[self._Name], ...);
+end
+
+local function BindableInvoke(self: any, ...: any): (boolean, any?)
+	if not _RateLimit(self) then return false end;
+	YieldTilObject(self._Name, BindableFunctionsCallBackList);
+	local Thread: thread = coroutine.running();
+	local Resume: boolean = false;
+
+	self._Receive = function(...: any)
+		Resume = true;
+		self._Receive = nil;
+		task.spawn(Thread, true, ...);
+	end
+
+	task.delay(self.TimeOut, function()
+		if (Resume) then return end;
+		self._Receive = nil;
+		task.spawn(Thread, false);
+	end)
+
+	task.spawn(BindableFunctionsCallBackList[self._Name], ...);
+	return coroutine.yield();
+end
+
+local function BindableCallBack(self: any, CallBack: CallBack): CallBack
+	BindableEventsCallBackList[self._Name] = CallBack;
+	return BindableEventsCallBackList[self._Name];
+end
+
+local function BindableInvokeCallBack(self: any, CallBack: CallBack): CallBack
+	BindableFunctionsCallBackList[self._Name] = function(...: any)
+		self._Receive(CallBack(...));
+		return;
+	end
+	return BindableFunctionsCallBackList[self._Name];
+end
+
+local function BindableGetCallBack(self: any): CallBack
+	return _GetCallBack(self._Name, BindableEventsCallBackList);
+end
+
+local function BindableGetInvokeCallBack(self: any): CallBack
+	return _GetCallBack(self._Name, BindableFunctionsCallBackList);
+end
+
+local function BindableSet(self: any, SetInfo: {[string]: any})
+	_Set(self, SetInfo);
+end
+
 function LBConnection.RemoteEvent(Name: string, Info: RemoteEventInfo): LBRemote
 	if (LBConnection.LBRemotes[Name]) then return LBConnection.LBRemotes[Name] end;
 	if not Info then Info = {} end;
@@ -262,66 +431,15 @@ function LBConnection.RemoteEvent(Name: string, Info: RemoteEventInfo): LBRemote
 		end
 	end
 
-	self.Fire = function(...: any)
-		if not _RateLimit(self) then return end;
-		_Fire(self._Remote, ...);
-	end
-
-	self.FireTo = function(PlayerArray: {Player}, ...: any)
-		if not IsServer or not _RateLimit(self) then return end;
-		for _: number, Player: Player in ipairs(PlayerArray) do
-			_Fire(self._Remote, Player, ...);
-		end
-	end
-
-	self.FireAll = function(...: any)
-		if not IsServer or not _RateLimit(self) then return end;
-		_FireAll(self._Remote, ...);
-	end
-
-	self.FireAllExcept = function(ExceptionArray: {Player}, ...: any)
-		if not IsServer or not _RateLimit(self) then return end;
-		local PlayerList: {Player} = Plr:GetPlayers();
-		for _: number, Exceptionalplr: Player in ipairs(ExceptionArray) do
-			if not table.find(PlayerList, Exceptionalplr) then return end;
-			table.remove(PlayerList, table.find(PlayerList, Exceptionalplr));
-		end
-		for _: number, Player: Player in ipairs(PlayerList) do
-			_Fire(self._Remote, Player, ...);
-		end
-	end
-
-	self.FireDistance = function(plr: Player, RenderDistance: number, ...: any)
-		if not IsServer or not _RateLimit(self) then return end;
-		local chr: any = plr.Character or plr.CharacterAdded:Wait();
-    	RenderDistance = RenderDistance or 20;
-    	local RenderPlayers: {Player} = GetNearPlayer(chr, RenderDistance);
-		for _: number, RenderPlayer: Player in ipairs(RenderPlayers) do
-			_Fire(self._Remote, RenderPlayer, ...);
-		end
-	end
-
-	self.CallBack = function(CallBack: CallBack): CallBack
-		return RemoteEventListener(self._Name, self._Remote, CallBack);
-	end
-
-	self.Once = function(CallBack: CallBack): CallBack
-		local ListenerFunction: (any) -> () = function(...: any)
-			if RemoteEventsCallBackList[self._Name] == nil then return end;
-			task.spawn(CallBack, ...);
-			RemoteEventsCallBackList[self._Name]:Disconnect();
-			RemoteEventsCallBackList[self._Name] = nil;
-		end
-		return RemoteEventListener(self._Name, self._Remote, ListenerFunction);
-	end
-
-	self.GetCallBack = function(): CallBack
-		return _GetCallBack(self._Name, RemoteEventsCallBackList);
-	end
-
-	self.Set = function(SetInfo: {[string]: any})
-		_Set(self, SetInfo);
-	end
+	self.Fire = RemoteFire;
+	self.FireTo = RemoteFireTo;
+	self.FireAll = RemoteFireAll;
+	self.FireAllExcept = RemoteFireAllExcept;
+	self.FireDistance = RemoteFireDistance;
+	self.CallBack = RemoteCallBack;
+	self.Once = RemoteOnce;
+	self.GetCallBack = RemoteGetCallBack;
+	self.Set = RemoteSet;
 
 	LBConnection.LBRemotes[Name] = self;
 	return LBConnection.LBRemotes[Name];
@@ -347,52 +465,10 @@ function LBConnection.RemoteFunction(Name: string, Info: RemoteFunctionInfo): LB
 		self._Receive = Folder.Receive;
 	end
 
-	self.Invoke = function(plr: Player, ...: any): (boolean, any?)
-		if not _RateLimit(self) then return false end;
-		local Thread: thread = coroutine.running();
-		local ID: number|string = GenerateNumbers();
-		local Resume: boolean = false;
-
-		RemoteFunctionsCallBackList[ID] = function(PlayerWhoFired: Player, CallbackState: boolean, ...: any)
-			if (PlayerWhoFired ~= plr) then return end;
-			Resume = true;
-			RemoteFunctionsCallBackList[ID] = nil;
-			if (CallbackState) then
-				task.spawn(Thread, true, ...);
-			else
-				task.spawn(Thread, false);
-			end
-		end
-
-		task.delay(self.TimeOut, function()
-			if (Resume) then return end;
-			RemoteFunctionsCallBackList[ID] = nil;
-			task.spawn(Thread, false);
-		end)
-
-		task.spawn(function(...: any)
-			if (IsServer) then
-				_Fire(self._Sent, plr, ID, ...);
-			else
-				_Fire(self._Sent, ID, ...);
-			end
-		end, ...)
-
-		return coroutine.yield();
-	end
-
-	self.InvokeCallBack = function(CallBack: CallBack): CallBack
-		RemoteFunctionsCallBackList[self._Name] = CallBack;
-		return RemoteFunctionsCallBackList[self._Name];
-	end
-
-	self.GetInvokeCallBack = function(): CallBack
-		return _GetCallBack(self._Name, RemoteFunctionsCallBackList);
-	end
-
-	self.Set = function(SetInfo: {[string]: any})
-		_Set(self, SetInfo);
-	end
+	self.Invoke = RemoteFunctionInvoke;
+	self.InvokeCallBack = RemoteFuncionCallBack;
+	self.GetInvokeCallBack = RemoteFunctionGetInvokeCallBack;
+	self.Set = RemoteFunctionSet;
 
 	if (IsServer) then
 		self._Sent.OnServerEvent:Connect(function(plr: Player, ID: string, ...: any)
@@ -419,76 +495,28 @@ function LBConnection.Bindable(Name: string, Info: BindableInfo): LBBindable
 	self.TimeOut = Info.TimeOut or 3;
 	self.Receive = nil;
 
-	self.Fire = function(...: any)
-		if not _RateLimit(self) then return end;
-		YieldTilObject(self._Name, BindableEventsCallBackList);
-		task.spawn(BindableEventsCallBackList[self._Name], ...);
-	end
-
-	self.Invoke = function(...: any): (boolean, any?)
-		if not _RateLimit(self) then return false end;
-		YieldTilObject(self._Name, BindableFunctionsCallBackList);
-		local Thread: thread = coroutine.running();
-		local Resume: boolean = false;
-
-		self._Receive = function(...: any)
-			Resume = true;
-        	self._Receive = nil;
-			task.spawn(Thread, true, ...);
-		end
-
-		task.delay(self.TimeOut, function()
-			if (Resume) then return end;
-			self._Receive = nil;
-			task.spawn(Thread, false);
-		end)
-
-		task.spawn(BindableFunctionsCallBackList[self._Name], ...);
-		return coroutine.yield();
-	end
-
-	self.CallBack = function(CallBack: CallBack): CallBack
-		BindableEventsCallBackList[self._Name] = CallBack;
-		return BindableEventsCallBackList[self._Name];
-	end
-
-	self.InvokeCallBack = function(CallBack: CallBack): CallBack
-		BindableFunctionsCallBackList[self._Name] = function(...: any)
-			self._Receive(CallBack(...));
-			return;
-		end
-		return BindableFunctionsCallBackList[self._Name];
-	end
-
-	self.GetCallBack = function(): CallBack
-		return _GetCallBack(self._Name, BindableEventsCallBackList);
-	end
-
-	self.GetInvokeCallBack = function(): CallBack
-		return _GetCallBack(self._Name, BindableFunctionsCallBackList);
-	end
-
-	self.Set = function(SetInfo: {[string]: any})
-		_Set(self, SetInfo);
-	end
+	self.Fire = BindableFire;
+	self.Invoke = BindableInvoke;
+	self.CallBack = BindableCallBack;
+	self.InvokeCallBack = BindableInvokeCallBack;
+	self.GetCallBack = BindableGetCallBack;
+	self.GetInvokeCallBack = BindableGetInvokeCallBack;
+	self.Set = BindableSet;
 
 	LBConnection.LBBindables[Name] = self;
 	return self;
 end
 
 function LBConnection.GetRemoteEvent(Name: string): LBRemote
-	YieldTilObject(Name, LBConnection.LBRemotes);
-	return LBConnection.LBRemotes[Name];
+	return _Get(Name, "LBRemotes");
 end
 
 function LBConnection.GetRemoteFunction(Name: string): LBRemoteFunction
-	YieldTilObject(Name, LBConnection.LBRemoteFunctions);
-	return LBConnection.LBRemoteFunctions[Name];
+	return _Get(Name, "LBRemoteFunctions");
 end
 
 function LBConnection.GetBindable(Name: string): LBBindable
-	YieldTilObject(Name, LBConnection.LBBindables);
-	return LBConnection.LBBindables[Name];
+	return _Get(Name, "LBBindables");
 end
 
 -- // Connections
@@ -501,9 +529,9 @@ if (IsServer) then
 		end
 	end)
 
-	RS2.PostSimulation:Connect(ServerPostSimulationListener)
+	RS2.PostSimulation:Connect(ServerPostSimulationListener);
 else
-	RS2.PostSimulation:Connect(ClientPostSimulationListener)
+	RS2.PostSimulation:Connect(ClientPostSimulationListener);
 end
 
 return LBConnection;
