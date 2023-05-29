@@ -111,16 +111,18 @@ local function CreateObject(Name: string, Info: {RateLimit: number?, RateLimitTi
 end
 
 local function YieldTilObject(Name: string, List: {})
+	if (List[Name]) then return end;
 	local Timeout: boolean = false;
-	while (not List[Name]) do
-		if not Timeout then
-			Timeout = true;
-			warn(string.format("LB Connection: Waiting for %s to load...", Name));
-			task.delay(5, function()
-				Timeout = true;
-			end)
+	task.delay(5, function()
+		if (List[Name]) then return end;
+		Timeout = true;
+		warn("Timeout: "..Name)
+	end)
+
+	while (not Timeout) do
+		if (not List[Name]) then
+			task.wait();
 		else
-			warn("Timeout: "..Name)
 			break;
 		end
 	end
@@ -186,7 +188,6 @@ local function _Set(self: any, SetInfo: {[string]: any})
 end
 
 local function _Get(Name: string, Table: string): any
-	if not LBConnection[Table][Name] then return end;
 	YieldTilObject(Name, LBConnection[Table]);
 	return LBConnection[Table][Name];
 end
