@@ -25,10 +25,10 @@ When firing the LBConnection.RemoteEvent, it is only necessary to declare the se
 To access an object that has been declared, it is recommended to use LBConnection.GetRemoteEvent , LBConnection.GetRemoteFunction , or LBConnection.GetBindable .
 
 # Q & A
-##### Q: Why are you removing the feature of packing byte string to binary format on v2.1.0-beta? 
+#### Q: Why are you removing the feature of packing byte string to binary format on v2.1.0-beta? 
 ##### A: My friend did a solo test in Roblox Studio, where networking isn’t a bottleneck, and there was no upper limit. The main problem was generating new data. Strings are already optimized for us, so further optimization might result in diminishing returns or worse network usage. The networking optimizations for strings are already in place, so we don’t need to optimize them further.
 
-##### Q: How can I modify the remote folder location?
+#### Q: How can I modify the remote folder location?
 ##### A: To modify the location of the remote folder, simply edit the value of the RemotesFolder variable within the module.
 
 # Installation
