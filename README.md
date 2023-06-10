@@ -18,11 +18,11 @@ The RemoteFunction in this module employs a secure identification method by pass
 The implementation of RemoteFunction in the module utilizes two RemoteEvent objects to simulate the behavior of RemoteFunction. Furthermore, implementing BindableEvent and BindableFunction in the module does not utilize any BindableEvent and BindableFunction objects, resulting in faster performance and increased maintainability.
 
 # Tips
-It is recommended to pre-add the RemoteEvent or a Folder containing two RemoteEvent, “Sent” and “Recieve”, to the Remotes folder using the Roblox Studio explorer. This can help to improve the speed at which LBConnection.RemoteEvent and LBConnection.RemoteFunction can access the RemoteEvent or RemoteFunction.
+It is recommended to pre-add the `RemoteEvent` or a `Folder` containing two `RemoteEvent`, "Sent" and "Recieve", to the Remotes folder using the Roblox Studio explorer. This can help to improve the speed at which `LBConnection.RemoteEvent` and `LBConnection.RemoteFunction` can access the `RemoteEvent` or `RemoteFunction`.
 
-When firing the LBConnection.RemoteEvent, it is only necessary to declare the second parameter once on the side from which it is fired. For instance, if the event is being fired from the server, the ‘Info’ parameter should only be declared on the server side. It is unnecessary to declare it on the client side if you are setting the callback only.
+When firing the `LBConnection.RemoteEvent`, it is only necessary to declare the second parameter once on the side from which it is fired. For instance, if the event is being fired from the server, the 'Info' parameter should only be declared on the server side. It is unnecessary to declare it on the client side if you are setting the callback only.
 
-To access an object that has been declared, it is recommended to use LBConnection.GetRemoteEvent , LBConnection.GetRemoteFunction , or LBConnection.GetBindable .
+To access an object that has been declared, it is recommended to use `LBConnection.GetRemoteEvent` , `LBConnection.GetRemoteFunction` , or `LBConnection.GetBindable` .
 
 # Q & A
 #### Q: Why are you removing the feature of packing byte string to binary format on v2.1.0-beta? 
