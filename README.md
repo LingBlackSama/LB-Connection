@@ -1,6 +1,36 @@
 # LB-Connection
 LB Connection is a `modulescript` that offers an alternative to use `RemoteEvent`, `RemoteFunction`, `BindableEvent`, and `BindableFunction` in Roblox Studio. It is specifically designed and coded to function within the Roblox Studio environment.
 
+# Advantages
+## Queuing package to the next frame
+The module operates by iterating over the queue and transmitting its contents. In the absence of any queued packages, no data is sent. This approach centralizes data traffic and reduces the risk of traffic overload.
+
+## Prevent memory leak
+This module addresses the memory leaks caused by the invocation of InvokeClient with Roblox RemoteFunction without returning any value or the use of Roblox BindableFunction, which yields until the function halts or returns a value. To prevent these memory leaks, the module includes a TimeOut parameter in its RemoteFunction and BindableFunction implementations, which can be used to specify a maximum duration for the function call and prevent the hang-up or memory leak from occurring.
+
+## Rate Limit
+The LBConnection module includes a rate-limiting mechanism for the RemoteEvent, RemoteFunction, BindableEvent, and BindableFunction objects, ensuring the platform’s stability and security. The RateLimit and RateLimitTime parameters allow developers to control the rate at which remote events are triggered and processed, providing a flexible and customizable experience for game development. By specifying these parameters, developers can prevent excessive usage or abuse of remote events, ensuring a smooth and enjoyable player experience.
+
+## Extremely light obfuscation
+The RemoteFunction in this module employs a secure identification method by passing a random binary string packed with an unsigned integer to the client and requiring the client to return it to the server. This approach helps to prevent potential exploitation by ensuring that only the correct data is returned to the server. (It should be noted that the binary string obfuscation used in this module is extremely light and can still be viewed by exploiters, potentially allowing them to manipulate the data sent from the server.)
+
+## Faster execution
+The implementation of RemoteFunction in the module utilizes two RemoteEvent objects to simulate the behavior of RemoteFunction. Furthermore, implementing BindableEvent and BindableFunction in the module does not utilize any BindableEvent and BindableFunction objects, resulting in faster performance and increased maintainability.
+
+# Tips
+It is recommended to pre-add the RemoteEvent or a Folder containing two RemoteEvent, “Sent” and “Recieve”, to the Remotes folder using the Roblox Studio explorer. This can help to improve the speed at which LBConnection.RemoteEvent and LBConnection.RemoteFunction can access the RemoteEvent or RemoteFunction.
+
+When firing the LBConnection.RemoteEvent, it is only necessary to declare the second parameter once on the side from which it is fired. For instance, if the event is being fired from the server, the ‘Info’ parameter should only be declared on the server side. It is unnecessary to declare it on the client side if you are setting the callback only.
+
+To access an object that has been declared, it is recommended to use LBConnection.GetRemoteEvent , LBConnection.GetRemoteFunction , or LBConnection.GetBindable .
+
+# Q & A
+Q: Why are you removing the feature of packing byte string to binary format on v2.1.0-beta?
+A: My friend did a solo test in Roblox Studio, where networking isn’t a bottleneck, and there was no upper limit. The main problem was generating new data. Strings are already optimized for us, so further optimization might result in diminishing returns or worse network usage. The networking optimizations for strings are already in place, so we don’t need to optimize them further.
+
+Q: How can I modify the remote folder location?
+A: To modify the location of the remote folder, simply edit the value of the RemotesFolder variable within the module.
+
 # Installation
 ### Method 1 - Quick Installation
 1. In Roblox Studio, select the folder where you store your third-party modules or utilities.
