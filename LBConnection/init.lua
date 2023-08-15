@@ -8,14 +8,23 @@ local Plr = game:GetService("Players");
 local RS2 = game:GetService("RunService");
 
 -- // Variables
+type Object = {
+	_Name: string,
+	_Rate: number,
+	_RateLimitStart: boolean,
+	_RateLimitReach: boolean,
+	RateLimit: number,
+	RateLimitTime: number,
+};
 type Request = {Remote: RemoteEvent, Data: {any}};
 type CallBack = (any) -> any;
 type RemoteEventInfo = {RateLimit: number?, RateLimitTime: number?};
 type RemoteFunctionInfo = {TimeOut: number?, RateLimit: number?, RateLimitTime: number?};
-type BindableInfo = RemoteFunctionInfo;
+type BindableEventInfo = RemoteEventInfo;
+type BindableFunctionInfo = RemoteFunctionInfo;
 type CallBackList = {[string|number]: any};
 
-type LBRemote = {
+export type LBRemote = {
 	_Name: string,
 	_Remote: nil|RemoteEvent,
 	Fire: (any) -> (),
@@ -29,7 +38,7 @@ type LBRemote = {
 	Set: () -> (),
 };
 
-type LBRemoteFunction = {
+export type LBRemoteFunction = {
 	_Name: string,
 	_TimeOut: number,
 	_Sent: nil|RemoteEvent,
@@ -40,17 +49,28 @@ type LBRemoteFunction = {
 	Set: () -> (),
 };
 
-type LBBindable = {
+export type LBBindableEvent = {
+	_Name: string,
+	Fire: (any) -> (),
+	CallBack: ((any) -> any) -> ((any) -> any),
+	GetCallBack: () -> ((any) -> any),
+	Set: () -> (),
+};
+
+export type LBBindableFunction = {
 	_Name: string,
 	_TimeOut: number,
 	_Receive: nil|(any) -> (boolean, any?),
-	Fire: (any) -> (),
 	Invoke: (any) -> (boolean, any?),
-	CallBack: ((any) -> any) -> ((any) -> any),
 	InvokeCallBack: ((any) -> any) -> ((any) -> any),
-	GetCallBack: () -> ((any) -> any),
 	GetInvokeCallBack: () -> ((any) -> any),
 	Set: () -> (),
+};
+
+type LBConnection = {
+	RemoteEvent: (Name: string, Info: RemoteEventInfo) -> LBRemote,
+	RemoteFunction: (Name: string, Info: RemoteFunctionInfo) -> LBRemoteFunction,
+	BindableEvent: (Name: string, Info: BindableEventInfo) -> LBBindableEvent,
 };
 
 local RemotesFolder: any = script.Remotes;
@@ -61,10 +81,11 @@ local RNG: Random = Random.new();
 -- // Booleans
 local IsServer: boolean = RS2:IsServer();
 
-local LBConnection: any = {
+local LBConnection: LBConnection = {
 	LBRemotes = {}::{[string]: LBRemote};
 	LBRemoteFunctions = {}::{[string]: LBRemoteFunction};
-	LBBindables = {}::{[string]: LBBindable};
+	LBBindableEvents = {}::{[string]: LBBindableEvent};
+	LBBindableFunctions = {}::{[string]: LBBindableFunction};
 };
 local RequestsList: {Request} = {};
 local FireAllRequestsList: {Request} = {};
@@ -99,7 +120,7 @@ local function CreateRemoteFunction(Name: string): Folder
 	return Folder;
 end
 
-local function CreateObject(Name: string, Info: {RateLimit: number?, RateLimitTime: number?})
+local function CreateObject(Name: string, Info: {RateLimit: number?, RateLimitTime: number?}): Object
 	return {
 		_Name = Name,
 		_Rate = 0,
@@ -107,7 +128,7 @@ local function CreateObject(Name: string, Info: {RateLimit: number?, RateLimitTi
 		_RateLimitReach = false,
 		RateLimit = Info.RateLimit or 60,
 		RateLimitTime = Info.RateLimitTime or 1,
-	};
+	}::Object;
 end
 
 local function YieldTilObject(Name: string, List: {})
@@ -312,10 +333,6 @@ local function RemoteGetCallBack(self: any): CallBack
 	return _GetCallBack(self._Name, RemoteEventsCallBackList);
 end
 
-local function RemoteSet(self: any, SetInfo: {[string]: any})
-	_Set(self, SetInfo);
-end
-
 local function RemoteFunctionInvoke(self: any, plr: Player, ...: any): (boolean, any?)
 	if not _RateLimit(self) then return false end;
 	local Thread: thread = coroutine.running();
@@ -357,10 +374,6 @@ end
 
 local function RemoteFunctionGetInvokeCallBack(self: any): CallBack
 	return _GetCallBack(self._Name, RemoteFunctionsCallBackList);
-end
-
-local function RemoteFunctionSet(self: any, SetInfo: {[string]: any})
-	_Set(self, SetInfo);
 end
 
 local function BindableFire(self: any, ...: any)
@@ -412,10 +425,6 @@ local function BindableGetInvokeCallBack(self: any): CallBack
 	return _GetCallBack(self._Name, BindableFunctionsCallBackList);
 end
 
-local function BindableSet(self: any, SetInfo: {[string]: any})
-	_Set(self, SetInfo);
-end
-
 function LBConnection.RemoteEvent(Name: string, Info: RemoteEventInfo): LBRemote
 	if (LBConnection.LBRemotes[Name]) then return LBConnection.LBRemotes[Name] end;
 	if not Info then Info = {} end;
@@ -440,7 +449,7 @@ function LBConnection.RemoteEvent(Name: string, Info: RemoteEventInfo): LBRemote
 	self.CallBack = RemoteCallBack;
 	self.Once = RemoteOnce;
 	self.GetCallBack = RemoteGetCallBack;
-	self.Set = RemoteSet;
+	self.Set = _Set;
 
 	LBConnection.LBRemotes[Name] = self;
 	return LBConnection.LBRemotes[Name];
@@ -469,7 +478,7 @@ function LBConnection.RemoteFunction(Name: string, Info: RemoteFunctionInfo): LB
 	self.Invoke = RemoteFunctionInvoke;
 	self.InvokeCallBack = RemoteFuncionCallBack;
 	self.GetInvokeCallBack = RemoteFunctionGetInvokeCallBack;
-	self.Set = RemoteFunctionSet;
+	self.Set = _Set;
 
 	if (IsServer) then
 		self._Sent.OnServerEvent:Connect(function(plr: Player, ID: string, ...: any)
@@ -489,22 +498,33 @@ function LBConnection.RemoteFunction(Name: string, Info: RemoteFunctionInfo): LB
 	return self;
 end
 
-function LBConnection.Bindable(Name: string, Info: BindableInfo): LBBindable
-	if (LBConnection.LBBindables[Name]) then return LBConnection.LBBindables[Name] end;
+function LBConnection.BindableEvent(Name: string, Info: BindableEventInfo): LBBindableEvent
+	if (LBConnection.LBBindableEvents[Name]) then return LBConnection.LBBindableEvents[Name] end;
+	if not Info then Info = {} end;
+	local self: any = CreateObject(Name, Info);
+
+	self.Fire = BindableFire;
+	self.CallBack = BindableCallBack;
+	self.GetCallBack = BindableGetCallBack;
+	self.Set = _Set;
+
+	LBConnection.LBBindableEvents[Name] = self;
+	return self;
+end
+
+function LBConnection.BindableFunction(Name: string, Info: BindableFunctionInfo): LBBindableFunction
+	if (LBConnection.LBBindableFunction[Name]) then return LBConnection.LBBindableFunction[Name] end;
 	if not Info then Info = {} end;
 	local self: any = CreateObject(Name, Info);
 	self.TimeOut = Info.TimeOut or 3;
 	self.Receive = nil;
 
-	self.Fire = BindableFire;
 	self.Invoke = BindableInvoke;
-	self.CallBack = BindableCallBack;
 	self.InvokeCallBack = BindableInvokeCallBack;
-	self.GetCallBack = BindableGetCallBack;
 	self.GetInvokeCallBack = BindableGetInvokeCallBack;
-	self.Set = BindableSet;
+	self.Set = _Set;
 
-	LBConnection.LBBindables[Name] = self;
+	LBConnection.LBBindableFunction[Name] = self;
 	return self;
 end
 
@@ -516,8 +536,12 @@ function LBConnection.GetRemoteFunction(Name: string): LBRemoteFunction
 	return _Get(Name, "LBRemoteFunctions");
 end
 
-function LBConnection.GetBindable(Name: string): LBBindable
-	return _Get(Name, "LBBindables");
+function LBConnection.GetBindableEvent(Name: string): LBBindableEvent
+	return _Get(Name, "LBBindablesEvents");
+end
+
+function LBConnection.GetBindableFunction(Name: string): LBBindableFunction
+	return _Get(Name, "LBBindablesFunctions");
 end
 
 -- // Connections
