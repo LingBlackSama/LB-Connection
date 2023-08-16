@@ -24,7 +24,7 @@ type BindableEventInfo = RemoteEventInfo;
 type BindableFunctionInfo = RemoteFunctionInfo;
 type CallBackList = {[string|number]: any};
 
-export type LBRemote = {
+export type LBRemoteEvent = {
 	_Name: string,
 	_Remote: nil|RemoteEvent,
 	Fire: (any) -> (),
@@ -52,7 +52,7 @@ export type LBRemoteFunction = {
 export type LBBindableEvent = {
 	_Name: string,
 	Fire: (any) -> (),
-	CallBack: ((any) -> any) -> ((any) -> any),
+	CallBack: (CallBack) -> ((any) -> any),
 	GetCallBack: () -> ((any) -> any),
 	Set: () -> (),
 };
@@ -67,10 +67,15 @@ export type LBBindableFunction = {
 	Set: () -> (),
 };
 
-type LBConnection = {
-	RemoteEvent: (Name: string, Info: RemoteEventInfo) -> LBRemote,
+export type LBConnection = {
+	RemoteEvent: (Name: string, Info: RemoteEventInfo) -> LBRemoteEvent,
 	RemoteFunction: (Name: string, Info: RemoteFunctionInfo) -> LBRemoteFunction,
 	BindableEvent: (Name: string, Info: BindableEventInfo) -> LBBindableEvent,
+	BindableFunction: (Name: string, Info: BindableFunctionInfo) -> LBBindableFunction,
+	GetRemoteEvent: (Name: string) -> LBRemoteEvent,
+	GetRemoteFunction: (Name: string) -> LBRemoteFunction,
+	GetBindableEvent: (Name: string) -> LBBindableEvent,
+	GetBindableFunction: (Name: string) -> LBBindableFunction,
 };
 
 local RemotesFolder: any = script.Remotes;
@@ -81,12 +86,11 @@ local RNG: Random = Random.new();
 -- // Booleans
 local IsServer: boolean = RS2:IsServer();
 
-local LBConnection: LBConnection = {
-	LBRemotes = {}::{[string]: LBRemote};
-	LBRemoteFunctions = {}::{[string]: LBRemoteFunction};
-	LBBindableEvents = {}::{[string]: LBBindableEvent};
-	LBBindableFunctions = {}::{[string]: LBBindableFunction};
-};
+local LBConnection = {}::LBConnection;
+local LBRemotes: {[string]: LBRemoteEvent} = {};
+local LBRemoteFunctions: {[string]: LBRemoteFunction} = {};
+local LBBindableEvents: {[string]: LBBindableEvent} = {};
+local LBBindableFunctions: {[string]: LBBindableFunction} = {};
 local RequestsList: {Request} = {};
 local FireAllRequestsList: {Request} = {};
 local RemoteEventsCallBackList: CallBackList = {};
@@ -425,8 +429,8 @@ local function BindableGetInvokeCallBack(self: any): CallBack
 	return _GetCallBack(self._Name, BindableFunctionsCallBackList);
 end
 
-function LBConnection.RemoteEvent(Name: string, Info: RemoteEventInfo): LBRemote
-	if (LBConnection.LBRemotes[Name]) then return LBConnection.LBRemotes[Name] end;
+function LBConnection.RemoteEvent(Name: string, Info: RemoteEventInfo): LBRemoteEvent
+	if (LBRemotes[Name]) then return LBRemotes[Name] end;
 	if not Info then Info = {} end;
 	local self: any = CreateObject(Name, Info);
 
@@ -451,12 +455,12 @@ function LBConnection.RemoteEvent(Name: string, Info: RemoteEventInfo): LBRemote
 	self.GetCallBack = RemoteGetCallBack;
 	self.Set = _Set;
 
-	LBConnection.LBRemotes[Name] = self;
-	return LBConnection.LBRemotes[Name];
+	LBRemotes[Name] = self;
+	return LBRemotes[Name];
 end
 
 function LBConnection.RemoteFunction(Name: string, Info: RemoteFunctionInfo): LBRemoteFunction
-	if (LBConnection.LBRemoteFunctions[Name]) then return LBConnection.LBRemoteFunctions[Name] end;
+	if (LBRemoteFunctions[Name]) then return LBRemoteFunctions[Name] end;
 	if not Info then Info = {} end;
 	local self: any = CreateObject(Name, Info);
 	self.TimeOut = Info.TimeOut or 3;
@@ -494,12 +498,12 @@ function LBConnection.RemoteFunction(Name: string, Info: RemoteFunctionInfo): LB
 		self._Receive.OnClientEvent:Connect(ReceiveListener);
 	end
 
-	LBConnection.LBRemoteFunctions[Name] = self;
+	LBRemoteFunctions[Name] = self;
 	return self;
 end
 
 function LBConnection.BindableEvent(Name: string, Info: BindableEventInfo): LBBindableEvent
-	if (LBConnection.LBBindableEvents[Name]) then return LBConnection.LBBindableEvents[Name] end;
+	if (LBBindableEvents[Name]) then return LBBindableEvents[Name] end;
 	if not Info then Info = {} end;
 	local self: any = CreateObject(Name, Info);
 
@@ -508,12 +512,12 @@ function LBConnection.BindableEvent(Name: string, Info: BindableEventInfo): LBBi
 	self.GetCallBack = BindableGetCallBack;
 	self.Set = _Set;
 
-	LBConnection.LBBindableEvents[Name] = self;
+	LBBindableEvents[Name] = self;
 	return self;
 end
 
 function LBConnection.BindableFunction(Name: string, Info: BindableFunctionInfo): LBBindableFunction
-	if (LBConnection.LBBindableFunction[Name]) then return LBConnection.LBBindableFunction[Name] end;
+	if (LBBindableFunctions[Name]) then return LBBindableFunctions[Name] end;
 	if not Info then Info = {} end;
 	local self: any = CreateObject(Name, Info);
 	self.TimeOut = Info.TimeOut or 3;
@@ -524,11 +528,11 @@ function LBConnection.BindableFunction(Name: string, Info: BindableFunctionInfo)
 	self.GetInvokeCallBack = BindableGetInvokeCallBack;
 	self.Set = _Set;
 
-	LBConnection.LBBindableFunction[Name] = self;
+	LBBindableFunctions[Name] = self;
 	return self;
 end
 
-function LBConnection.GetRemoteEvent(Name: string): LBRemote
+function LBConnection.GetRemoteEvent(Name: string): LBRemoteEvent
 	return _Get(Name, "LBRemotes");
 end
 
@@ -537,11 +541,11 @@ function LBConnection.GetRemoteFunction(Name: string): LBRemoteFunction
 end
 
 function LBConnection.GetBindableEvent(Name: string): LBBindableEvent
-	return _Get(Name, "LBBindablesEvents");
+	return _Get(Name, "LBBindableEvents");
 end
 
 function LBConnection.GetBindableFunction(Name: string): LBBindableFunction
-	return _Get(Name, "LBBindablesFunctions");
+	return _Get(Name, "LBBindableFunctions");
 end
 
 -- // Connections
