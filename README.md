@@ -220,88 +220,109 @@ function LBConnection.RemoteFunction.Set(
 ```
 This function is as same as the second parameter of `LBConnection.RemoteFunction`.
 
-## LBConnection.Bindable
+## LBConnection.BindableEvent
 ```lua
-type LBConnection.Bindable = (string, {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}) -> any
-function LBConnection.Bindable(
+type LBConnection.BindableEvent = (string, {RateLimit: number?, RateLimitTime: number?}) -> any
+function LBConnection.BindableEvent(
+  Name: string, -- Name of the RemoteFunction
+  Info: {RateLimit: number?, RateLimitTime: number?}, -- Optional: Information table
+): {
+  _Name: string,
+	Fire: (any) -> (),
+	CallBack: (CallBack) -> ((any) -> any),
+	GetCallBack: () -> ((any) -> any),
+	Set: () -> (),
+}
+```
+The function `LBConnection.BindableEvent` creates an LB BindableEvent object within the LB Connection. It does not create an additional BindableEvent. The `RateLimit` parameter specifies the rate in the rate limit for the LB BindableEvent, while the `RateLimitTime` parameter indicates the duration of the rate limit.
+
+## LBConnection.BindableEvent:Fire
+```lua
+type LBConnection.BindableEvent:Fire = (any) -> ()
+function LBConnection.BindableEvent:Fire(
+  ...: any,
+)
+```
+This function operates in a similar manner to `BindableEvent`, but the callback uses `LBConnection.BindableEvent:CallBack`. Additionally, it does not create an additional `BindableEvent`, which makes the function run faster, prevents memory leaks, and is not resource-intensive.
+
+## LBConnection.BindableEvent:CallBack
+```lua
+type LBConnection.BindableEvent:CallBack = ((any) -> any) -> ((any) -> any)
+function LBConnection.BindableEvent:CallBack(
+  CallBack: (any) -> any,
+): ((any) -> any)
+```
+The function sets the BindableEvent callBack to `CallBack` function.
+
+## LBConnection.BindableEvent:GetCallBack
+```lua
+type LBConnection.BindableEvent:GetCallBack = () -> ((any) -> any)
+function LBConnection.BindableEvent:GetCallBack(): ((any) -> any)
+```
+The function returns the callback that was set with `LBConnection.BindableEvent:CallBack`.
+
+## LBConnection.BindableEvent:Set
+```lua
+type LBConnection.BindableEvent:Set = ({[string]: any}) -> ()
+function LBConnection.BindableEvent:Set(
+  SetInfo: {[string]: any}
+)
+```
+This function is as same as the second parameter of `LBConnection.BindableEvent`.
+
+## LBConnection.BindableFunction
+```lua
+type LBConnection.BindableFunction = (string, {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}) -> any
+function LBConnection.BindableFunction(
   Name: string, -- Name of the RemoteFunction
   Info: {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}, -- Optional: Information table
 ): {
   _Name: string,
-  _TimeOut: number,
-  _Receive: nil|(any) -> (boolean, any?),
-  Fire: (any) -> (),
-  Invoke: (any) -> (boolean, any?),
-  CallBack: ((any) -> any) -> ((any) -> any),
-  InvokeCallBack: ((any) -> any) -> ((any) -> any),
-  GetCallBack: () -> ((any) -> any),
-  GetInvokeCallBack: () -> ((any) -> any),
+	_TimeOut: number,
+	_Receive: nil|(any) -> (boolean, any?),
+	Invoke: (any) -> (boolean, any?),
+	InvokeCallBack: ((any) -> any) -> ((any) -> any),
+	GetInvokeCallBack: () -> ((any) -> any),
+	Set: () -> (),
 }
 ```
-The function `LBConnection.Bindable` creates a LB Bindable object within the LB Connection. It does not creating an additional BindableEvent or BindableFunction. The `RateLimit` parameter specifies the rate in the rate limit for the LB Bindable, while the `RateLimitTime` parameter indicates the duration of the rate limit. The `TimeOut` parameter defines the timeout duration for the LB Bindable. The `TimeOut` parameter does not need to be defined if you will not send the package with it.
+The function `LBConnection.BindableFunction` creates an LB BindableEvent object within the LB Connection. It does not create an additional BindableFunction. The `RateLimit` parameter specifies the rate in the rate limit for the LB BindableFunction, while the `RateLimitTime` parameter indicates the duration of the rate limit. The `TimeOut` parameter defines the timeout duration for the LB Bindable. The `TimeOut` parameter does not need to be defined if you will not send the package with it.
 
-
-## LBConnection.Bindable:Fire
+## LBConnection.BindableFunction:Invoke
 ```lua
-type LBConnection.Bindable:Fire = (any) -> ()
-function LBConnection.Bindable:Fire(
-  ...: any,
-)
-```
-This function operates in a similar manner to `BindableEvent`, but the callback uses `LBConnection.Bindable:CallBack`. Additionally, it does not create an additional `BindableEvent`, which makes the function run faster, prevents memory leaks, and is not resource-intensive.
-
-
-## LBConnection.Bindable:Invoke
-```lua
-type LBConnection.Bindable:Invoke = (any) -> (boolean, any?)
-function LBConnection.Bindable:Invoke(
+type LBConnection.BindableFunction:Invoke = (any) -> (boolean, any?)
+function LBConnection.BindableFunction:Invoke(
   ...: any,
 ): (boolean, any?)
 ```
-This function operates in a similar manner to `BindableFunction`, but it does not create an additional `BindableFunction` and uses `LBConnection.Bindable:InvokeCallBack` as a callback. It runs faster than `BindableFunction`. The `TimeOut` parameter will pause execution until the specified time in seconds has elapsed. If data is received during this time, the function will return as true along with the data. If no data is received, the function will return as false.
+This function operates in a similar manner to `BindableFunction`, but it does not create an additional `BindableFunction` and uses `LBConnection.BindableFunction:InvokeCallBack` as a callback. It runs faster than `BindableFunction`. The `TimeOut` parameter will pause execution until the specified time in seconds has elapsed. If data is received during this time, the function will return as true along with the data. If no data is received, the function will return as false.
 
-## LBConnection.Bindable:CallBack
+## LBConnection.BindableFunction:InvokeCallBack
 ```lua
-type LBConnection.Bindable:CallBack = ((any) -> any) -> ((any) -> any)
-function LBConnection.Bindable:CallBack(
+type LBConnection.BindableFunction:InvokeCallBack = ((any) -> any) -> ((any) -> any)
+function LBConnection.BindableFunction:InvokeCallBack(
   CallBack: (any) -> any,
 ): ((any) -> any)
 ```
-The function sets the Bindable callBack to `CallBack` function
+The function sets the BindableFunction invoke callBack to `CallBack` function
 
-## LBConnection.Bindable:InvokeCallBack
+## LBConnection.BindableFunction:GetInvokeCallBack
 ```lua
-type LBConnection.Bindable:InvokeCallBack = ((any) -> any) -> ((any) -> any)
-function LBConnection.Bindable:InvokeCallBack(
+type LBConnection.BindableFunction:GetInvokeCallBack = ((any) -> any) -> ((any) -> any)
+function LBConnection.BindableFunction:GetInvokeCallBack(
   CallBack: (any) -> any,
 ): ((any) -> any)
 ```
-The function sets the Bindable invoke callBack to `CallBack` function
+The function returns the callback that was set with `LBConnection.BindableFunction:InvokeCallBack`.
 
-## LBConnection.Bindable:GetCallBack
+## LBConnection.BindableFunction:Set
 ```lua
-type LBConnection.Bindable:GetCallBack = () -> ((any) -> any)
-function LBConnection.Bindable:GetCallBack(): ((any) -> any)
-```
-The function returns the callback that was set with `LBConnection.Bindable:CallBack`.
-
-## LBConnection.Bindable:GetInvokeCallBack
-```lua
-type LBConnection.Bindable:GetInvokeCallBack = ((any) -> any) -> ((any) -> any)
-function LBConnection.Bindable:GetInvokeCallBack(
-  CallBack: (any) -> any,
-): ((any) -> any)
-```
-The function returns the callback that was set with `LBConnection.Bindable:InvokeCallBack`.
-
-## LBConnection.Bindable:Set
-```lua
-type LBConnection.Bindable:Set = ({[string]: any}) -> ()
-function LBConnection.Bindable:Set(
+type LBConnection.BindableFunction:Set = ({[string]: any}) -> ()
+function LBConnection.BindableFunction:Set(
   SetInfo: {[string]: any}
 )
 ```
-This function is as same as the second parameter of `LBConnection.Bindable`.
+This function is as same as the second parameter of `LBConnection.BindableFunction`.
 
 ## LBConnection.GetRemoteEvent
 ```lua
@@ -321,11 +342,21 @@ function LBConnection.GetRemoteFunction(
 ```
 Return the LB RemoteFunction
 
-## LBConnection.GetBindable
+## LBConnection.GetBindableEvent
 ```lua
-type LBConnection.GetBindable = (string): any
-function LBConnection.GetBindable(
+type LBConnection.GetBindableEvent = (string): any
+function LBConnection.GetBindableEvent(
   Name: string,
 ): any
 ```
-Return the LB Bindable
+Return the LB BindableEvent
+
+
+## LBConnection.GetBindableFunction
+```lua
+type LBConnection.GetBindableFunction = (string): any
+function LBConnection.GetBindableFunction(
+  Name: string,
+): any
+```
+Return the LB BindableFunction
