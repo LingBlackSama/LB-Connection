@@ -228,10 +228,10 @@ function LBConnection.BindableEvent(
   Info: {RateLimit: number?, RateLimitTime: number?}, -- Optional: Information table
 ): {
   _Name: string,
-	Fire: (any) -> (),
-	CallBack: (CallBack) -> ((any) -> any),
-	GetCallBack: () -> ((any) -> any),
-	Set: () -> (),
+  Fire: (any) -> (),
+  CallBack: (CallBack) -> ((any) -> any),
+  GetCallBack: () -> ((any) -> any),
+  Set: () -> (),
 }
 ```
 The function `LBConnection.BindableEvent` creates an LB BindableEvent object within the LB Connection. It does not create an additional BindableEvent. The `RateLimit` parameter specifies the rate in the rate limit for the LB BindableEvent, while the `RateLimitTime` parameter indicates the duration of the rate limit.
@@ -278,12 +278,12 @@ function LBConnection.BindableFunction(
   Info: {TimeOut: number?, RateLimit: number?, RateLimitTime: number?}, -- Optional: Information table
 ): {
   _Name: string,
-	_TimeOut: number,
-	_Receive: nil|(any) -> (boolean, any?),
-	Invoke: (any) -> (boolean, any?),
-	InvokeCallBack: ((any) -> any) -> ((any) -> any),
-	GetInvokeCallBack: () -> ((any) -> any),
-	Set: () -> (),
+  _TimeOut: number,
+  _Receive: nil|(any) -> (boolean, any?),
+  Invoke: (any) -> (boolean, any?),
+  InvokeCallBack: ((any) -> any) -> ((any) -> any),
+  GetInvokeCallBack: () -> ((any) -> any),
+  Set: () -> (),
 }
 ```
 The function `LBConnection.BindableFunction` creates an LB BindableEvent object within the LB Connection. It does not create an additional BindableFunction. The `RateLimit` parameter specifies the rate in the rate limit for the LB BindableFunction, while the `RateLimitTime` parameter indicates the duration of the rate limit. The `TimeOut` parameter defines the timeout duration for the LB Bindable. The `TimeOut` parameter does not need to be defined if you will not send the package with it.
